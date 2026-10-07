@@ -13,22 +13,32 @@ No timers, no tasks, no labels. Work as usual, then look.
 
 ## Install
 
-Paste this into Terminal:
+Open **Terminal**, paste this line, and press Enter:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/GDenizKaratas/timewent/main/install.sh | sh
 ```
 
-It downloads the latest release (Apple Silicon and Intel), puts timewent in Applications and
-opens it. Then press **▶** and allow **Accessibility** when macOS asks.
+That's it. You don't need any developer tools. It downloads the latest version (works on Apple
+Silicon and Intel Macs, macOS 12+), puts timewent in **Applications** and opens it.
+
+**First launch:** press **▶** in the pill, then allow **Accessibility** when macOS asks (that's
+how timewent sees file and page names). Peek any time with **`⌥⇧Space`**.
+
+**Update:** run the same line again. **Uninstall:** quit timewent, then
+
+```sh
+rm -rf /Applications/timewent.app ~/Library/LaunchAgents/timewent.plist
+rm -rf ~/Library/Application\ Support/dev.timewent.app   # also deletes your history
+```
 
 <details>
 <summary>Prefer to download it yourself?</summary>
 
-1. Get `timewent-macos-universal.zip` from [Releases](https://github.com/GDenizKaratas/timewent/releases/latest)
-   and drag `timewent.app` into Applications.
-2. timewent isn't notarized by Apple yet, so the first launch is blocked. Open
-   *System Settings → Privacy & Security* and click **Open Anyway**. You only do this once.
+1. Get `timewent-macos-universal.zip` from [Releases](https://github.com/GDenizKaratas/timewent/releases/latest),
+   open it, and drag `timewent.app` into Applications.
+2. timewent isn't notarized by Apple yet, so macOS blocks the first launch. Open
+   *System Settings → Privacy & Security*, scroll down and click **Open Anyway**. You only do this once.
 </details>
 
 ## What it's for
