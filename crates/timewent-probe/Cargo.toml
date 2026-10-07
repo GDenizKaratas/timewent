@@ -1,0 +1,50 @@
+[package]
+name = "timewent-probe"
+description = "macOS sampling for timewent: frontmost app, window title, url, idle, lock."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+timewent-core.workspace = true
+# The dump binary prints samples as JSONL, the same format as fixtures/.
+serde_json.workspace = true
+
+# Generated framework bindings from one family (objc2): typed ObjC/CF calls whose owned
+# results are RAII (`Retained`/`CFRetained`), so nothing leaks at 1 Hz. Default features off;
+# only the headers used are enabled.
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSString"] }
+objc2-app-kit = { version = "0.3", default-features = false, features = [
+    "std",
+    "libc", # pid_t for processIdentifier
+    "NSRunningApplication",
+    "NSWorkspace",
+] }
+objc2-core-foundation = { version = "0.3", default-features = false, features = [
+    "std",
+    "CFArray",
+    "CFBase",
+    "CFDate",
+    "CFDictionary",
+    "CFNumber",
+    "CFRunLoop",
+    "CFString",
+] }
+objc2-application-services = { version = "0.3", default-features = false, features = [
+    "std",
+    "libc", # pid_t for AXUIElementCreateApplication
+    "HIServices",
+    "AXError",
+    "AXUIElement",
+] }
+objc2-core-graphics = { version = "0.3", default-features = false, features = [
+    "std",
+    "CGEventSource",
+    "CGEventTypes",
+    "CGSession",
+] }
+# Power assertions: "is any process keeping the display awake" (video, calls) — PLAN §10.1.
+objc2-io-kit = { version = "0.3", default-features = false, features = ["std", "pwr_mgt"] }

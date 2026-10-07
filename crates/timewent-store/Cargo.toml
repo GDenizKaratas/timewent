@@ -1,0 +1,16 @@
+[package]
+name = "timewent-store"
+description = "SQLite storage for timewent: immutable raw samples grouped into sessions."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+timewent-core.workspace = true
+rusqlite.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+tempfile.workspace = true

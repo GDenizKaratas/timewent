@@ -1,0 +1,43 @@
+{
+  "summary": {
+    "total_ms": 720000,
+    "active_ms": 164000,
+    "passive_ms": 556000,
+    "away_ms": 0,
+    "longest_focus_ms": 600000,
+    "switches": 2,
+    "categories": [{ "category": "media", "ms": 600000, "share": 0.8333 }, { "category": "code", "ms": 120000, "share": 0.1667 }],
+    "listening": [],
+    "rows": [
+      {
+        "key": "web:youtube.com",
+        "label": "YouTube",
+        "category": "media",
+        "kind": "context",
+        "ms": 600000,
+        "share": 0.8333,
+        "breakdown": [],
+        "details": [{ "detail": "cat video - YouTube", "ms": 600000 }]
+      },
+      {
+        "key": "code:timewent",
+        "label": "timewent",
+        "category": "code",
+        "kind": "project",
+        "ms": 120000,
+        "share": 0.1667,
+        "breakdown": [{ "key": "code", "label": "code", "ms": 120000 }],
+        "details": [{ "detail": "main.rs", "ms": 120000 }]
+      }
+    ]
+  },
+  "segments": [
+    { "key": "code:timewent", "kind": "focus", "start_ms": 1791273600000, "end_ms": 1791273660000, "active_ms": 60000, "passive_ms": 0, "explain": [] },
+    { "key": "web:youtube.com", "kind": "focus", "start_ms": 1791273660000, "end_ms": 1791274260000, "active_ms": 44000, "passive_ms": 556000,
+      "explain": [
+        "passive 9m16s — idle ≥ 45s, kept as reading",
+        "kept as passive 9m16s — media/meeting kept the display awake"
+      ] },
+    { "key": "code:timewent", "kind": "focus", "start_ms": 1791274260000, "end_ms": 1791274320000, "active_ms": 60000, "passive_ms": 0, "explain": [] }
+  ]
+}

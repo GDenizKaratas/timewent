@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- timewent: a terminal prompt with a green block cursor on a black rounded square. -->
+  <rect x="100" y="100" width="824" height="824" rx="184" fill="#0c0c0c"/>
+  <rect x="104" y="104" width="816" height="816" rx="180" fill="none" stroke="#2e2e2e" stroke-width="8"/>
+  <polyline points="300,392 440,512 300,632" fill="none" stroke="#8a8a8a" stroke-width="56"
+            stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="520" y="372" width="150" height="280" rx="10" fill="#5fd068"/>
+</svg>

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-seen-sources"
+description = "Enables the seen_sources command without any pre-configured scope."
+commands.allow = ["seen_sources"]
+
+[[permission]]
+identifier = "deny-seen-sources"
+description = "Denies the seen_sources command without any pre-configured scope."
+commands.deny = ["seen_sources"]

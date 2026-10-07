@@ -1,0 +1,34 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/timewent-core",
+    "crates/timewent-store",
+    "crates/timewent-probe",
+    "src-tauri",
+]
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+license = "MIT"
+publish = false
+
+[workspace.dependencies]
+timewent-core = { path = "crates/timewent-core" }
+timewent-store = { path = "crates/timewent-store" }
+timewent-probe = { path = "crates/timewent-probe" }
+serde = { version = "1", features = ["derive"] }
+# float_roundtrip: exported f64s (row share) must parse back bit-exact.
+serde_json = { version = "1", features = ["float_roundtrip"] }
+url = "2"
+thiserror = "2"
+# bundled: a known SQLite (WAL, expression indexes) independent of the macOS system copy.
+rusqlite = { version = "0.40", features = ["bundled"] }
+tempfile = "3"
+
+# Small binaries over peak speed (PLAN §1: lightweight).
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true

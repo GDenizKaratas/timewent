@@ -1,0 +1,50 @@
+{
+  "summary": {
+    "total_ms": 480000,
+    "active_ms": 480000,
+    "passive_ms": 0,
+    "away_ms": 0,
+    "longest_focus_ms": 210000,
+    "switches": 2,
+    "categories": [{ "category": "code", "ms": 390000, "share": 0.8125 }, { "category": "ai", "ms": 90000, "share": 0.1875 }],
+    "listening": [],
+    "rows": [
+      {
+        "key": "act:coding",
+        "label": "coding",
+        "category": "code",
+        "kind": "activity",
+        "ms": 390000,
+        "share": 0.8125,
+        "breakdown": [{ "key": "com.microsoft.VSCode", "label": "Code", "ms": 300000 }, { "key": "com.googlecode.iterm2", "label": "iTerm2", "ms": 90000 }],
+        "details": [
+          { "detail": "bank-agent-lab · risk_engine.py", "ms": 300000 },
+          { "detail": "iTerm2 · ~/src/bank-agent-lab — zsh", "ms": 90000 }
+        ]
+      },
+      {
+        "key": "web:chatgpt.com",
+        "label": "ChatGPT",
+        "category": "ai",
+        "kind": "context",
+        "ms": 90000,
+        "share": 0.1875,
+        "breakdown": [],
+        "details": [{ "detail": "bank-agent-lab risk model", "ms": 90000 }]
+      }
+    ]
+  },
+  "segments": [
+    { "key": "act:coding", "kind": "focus", "start_ms": 1791273600000, "end_ms": 1791273780000, "active_ms": 180000, "passive_ms": 0,
+      "explain": [
+        "Code counted as coding — your activity",
+        "iTerm2 counted as coding — your activity"
+      ] },
+    { "key": "web:chatgpt.com", "kind": "focus", "start_ms": 1791273780000, "end_ms": 1791273870000, "active_ms": 90000, "passive_ms": 0, "explain": [] },
+    { "key": "act:coding", "kind": "focus", "start_ms": 1791273870000, "end_ms": 1791274080000, "active_ms": 210000, "passive_ms": 0,
+      "explain": [
+        "Code counted as coding — your activity",
+        "iTerm2 counted as coding — your activity"
+      ] }
+  ]
+}

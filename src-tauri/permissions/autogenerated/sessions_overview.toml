@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-sessions-overview"
+description = "Enables the sessions_overview command without any pre-configured scope."
+commands.allow = ["sessions_overview"]
+
+[[permission]]
+identifier = "deny-sessions-overview"
+description = "Denies the sessions_overview command without any pre-configured scope."
+commands.deny = ["sessions_overview"]

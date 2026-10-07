@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Menu-bar app: no Dock icon from the very first frame (the runtime Accessory policy
+       covers `tauri dev`, which runs the bare binary). -->
+  <key>LSUIElement</key>
+  <true/>
+  <!-- Shown in the Automation prompt the first time a browser URL is read via osascript. -->
+  <key>NSAppleEventsUsageDescription</key>
+  <string>timewent reads the URL of the active browser tab to label your time. Nothing else is read, and nothing leaves this Mac.</string>
+</dict>
+</plist>

@@ -1,0 +1,39 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "Exactly what the ui calls: the timewent commands, the `peek` event, window sizing/dragging/visibility, and the export save dialog.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "allow-start-session",
+    "allow-stop-session",
+    "allow-get-status",
+    "allow-get-view",
+    "allow-list-sessions",
+    "allow-export-json",
+    "allow-export-json-string",
+    "allow-copy-json",
+    "allow-get-config",
+    "allow-set-config",
+    "allow-get-info",
+    "allow-open-accessibility-settings",
+    "allow-get-prefs",
+    "allow-set-prefs",
+    "allow-hide-window",
+    "allow-quit-app",
+    "allow-end-peek",
+    "allow-set-layout",
+    "allow-seen-sources",
+    "allow-resize-window",
+    "allow-sessions-overview",
+    "allow-delete-session",
+    "core:window:allow-start-dragging",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-set-focus",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "dialog:allow-save"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "summary": {
+    "total_ms": 452000,
+    "active_ms": 422000,
+    "passive_ms": 30000,
+    "away_ms": 0,
+    "longest_focus_ms": 182000,
+    "switches": 2,
+    "categories": [{ "category": "code", "ms": 182000, "share": 0.4027 }, { "category": "docs", "ms": 180000, "share": 0.3982 }, { "category": "ai", "ms": 90000, "share": 0.1991 }],
+    "listening": [],
+    "rows": [
+      {
+        "key": "code:bank-agent-lab",
+        "label": "bank-agent-lab",
+        "category": "code",
+        "kind": "project",
+        "ms": 182000,
+        "share": 0.4027,
+        "breakdown": [{ "key": "code", "label": "code", "ms": 182000 }],
+        "details": [
+          { "detail": "risk_engine.py", "ms": 120000 },
+          { "detail": "models.py", "ms": 60000 }
+        ]
+      },
+      {
+        "key": "web:docs",
+        "label": "docs",
+        "category": "docs",
+        "kind": "context",
+        "ms": 180000,
+        "share": 0.3982,
+        "breakdown": [],
+        "details": [
+          { "detail": "docs.rs", "ms": 140000 },
+          { "detail": "stackoverflow.com", "ms": 40000 }
+        ]
+      },
+      {
+        "key": "web:chatgpt.com",
+        "label": "ChatGPT",
+        "category": "ai",
+        "kind": "context",
+        "ms": 90000,
+        "share": 0.1991,
+        "breakdown": [],
+        "details": [{ "detail": "Rust lifetimes explained", "ms": 90000 }]
+      }
+    ]
+  },
+  "segments": [
+    { "key": "code:bank-agent-lab", "kind": "focus", "start_ms": 1791273600000, "end_ms": 1791273782000, "active_ms": 182000, "passive_ms": 0,
+      "explain": ["absorbed YouTube (2s) — under transient threshold 3s"] },
+    { "key": "web:docs", "kind": "focus", "start_ms": 1791273782000, "end_ms": 1791273962000, "active_ms": 150000, "passive_ms": 30000,
+      "explain": ["passive 30s — idle ≥ 45s, kept as reading"] },
+    { "key": "web:chatgpt.com", "kind": "focus", "start_ms": 1791273962000, "end_ms": 1791274052000, "active_ms": 90000, "passive_ms": 0, "explain": [] }
+  ]
+}

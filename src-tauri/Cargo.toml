@@ -1,0 +1,68 @@
+[package]
+name = "timewent-app"
+description = "timewent desktop app: tracking loop, IPC commands, tray, export."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+default-run = "timewent"
+
+[lib]
+name = "timewent_app"
+path = "src/lib.rs"
+
+[[bin]]
+name = "timewent"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2.7", features = [] }
+
+[dependencies]
+timewent-core.workspace = true
+timewent-store.workspace = true
+timewent-probe.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+# tray-icon: menu-bar presence; macos-private-api: transparent window. (The tray image is
+# decoded at compile time by `include_image!`, so no runtime image decoder.)
+tauri = { version = "2.12", features = ["tray-icon", "macos-private-api"] }
+# Native save panel for export (the only dialog the ui opens).
+tauri-plugin-dialog = "2.8"
+# Open at login (PLAN §22): a LaunchAgent pointing at the bundle's executable (with
+# `--login`). Chosen over SMAppService: it survives ad-hoc rebuilds at the same path (no
+# signature binding) and passes an argument, so a login launch can start quietly.
+tauri-plugin-autostart = "2.7"
+# The peek key (PLAN §10.4): a system-wide hotkey (Carbon RegisterEventHotKey; no permission).
+tauri-plugin-global-shortcut = "2"
+# Peek over full-screen apps needs NSWindowCollectionBehaviorFullScreenAuxiliary, which Tauri
+# does not expose. Same objc2 family and version the probe and Tauri already use.
+[target.'cfg(target_os = "macos")'.dependencies]
+# Language "system" = NSLocale.preferredLanguages (PLAN §13.3).
+objc2-foundation = { version = "0.3", default-features = false, features = [
+    "std",
+    "NSArray",
+    "NSGeometry",
+    "NSLocale",
+    "NSString",
+] }
+# Also hands the keyboard back after a peek, and writes "copy as json" to the pasteboard
+# (NSPasteboard: no extra crate, unlike the clipboard plugin — §23.1) (frontmost app → re-activate it).
+objc2-app-kit = { version = "0.3", default-features = false, features = [
+    "std",
+    "libc",
+    "NSResponder",
+            "NSPasteboard",
+    "NSRunningApplication",
+    "NSScreen",
+    "NSWindow",
+    "NSWorkspace",
+] }
+# "today" starts at local midnight: needs the system time zone, DST-correct, without unsafe FFI.
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+# The report's `timezone` field (IANA name). Already compiled in: chrono's `clock` uses it.
+iana-time-zone = "0.1"
+
+[dev-dependencies]
+tempfile.workspace = true

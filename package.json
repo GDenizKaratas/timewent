@@ -1,0 +1,17 @@
+{
+  "name": "timewent",
+  "private": true,
+  "version": "0.1.0",
+  "description": "see where your time went.",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "npm --prefix ui install",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "test": "npm --prefix ui test",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.12.1"
+  }
+}

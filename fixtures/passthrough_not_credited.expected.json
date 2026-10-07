@@ -1,0 +1,41 @@
+{
+  "summary": {
+    "total_ms": 165000,
+    "active_ms": 165000,
+    "passive_ms": 0,
+    "away_ms": 0,
+    "longest_focus_ms": 40000,
+    "switches": 1,
+    "categories": [{ "category": "app", "ms": 70000, "share": 0.4242 }],
+    "listening": [],
+    "not_shown": [{ "label": "timewent", "ms": 95000 }],
+    "rows": [
+      {
+        "key": "app:Sistem Ayarları",
+        "label": "Sistem Ayarları",
+        "category": "app",
+        "kind": "context",
+        "ms": 40000,
+        "share": 0.2424,
+        "breakdown": [],
+        "details": [{ "detail": "Gizlilik", "ms": 40000 }]
+      },
+      {
+        "key": "app:PDFgear",
+        "label": "PDFgear",
+        "category": "app",
+        "kind": "context",
+        "ms": 30000,
+        "share": 0.1818,
+        "breakdown": [],
+        "details": [{ "detail": "report.pdf", "ms": 30000 }]
+      }
+    ]
+  },
+  "segments": [
+    { "key": "app:Sistem Ayarları", "kind": "focus", "start_ms": 1791273600000, "end_ms": 1791273640000, "active_ms": 40000, "passive_ms": 0, "explain": [] },
+    { "key": "pass:dev.timewent.app", "kind": "glance", "start_ms": 1791273640000, "end_ms": 1791273735000, "active_ms": 95000, "passive_ms": 0,
+      "explain": ["timewent 1m35s — passthrough, not credited to any activity"] },
+    { "key": "app:PDFgear", "kind": "focus", "start_ms": 1791273735000, "end_ms": 1791273765000, "active_ms": 30000, "passive_ms": 0, "explain": [] }
+  ]
+}
