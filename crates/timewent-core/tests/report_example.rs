@@ -1,4 +1,4 @@
-//! `docs/export-example.json` is the documented example of `timewent.report.v3` (PLAN §23.3):
+//! `docs/export-example.json` is the documented example of `timewent.report.v3` (DESIGN §10):
 //! the `today` report of the `project_research_session` fixture, English, Europe/Istanbul.
 //! This test keeps the committed file identical to what the code produces; a second test holds
 //! the size budget. To regenerate after an intended change:
@@ -7,7 +7,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use timewent_core::{report, Config, Lang, Range, ReportInput, Sample, SessionMeta};
+use timewent_core::{json_text, report, Config, Lang, Range, ReportInput, Sample, SessionMeta};
 
 fn root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -48,7 +48,7 @@ fn today(sessions: &[Vec<Sample>]) -> String {
         offset_at: &istanbul,
         generated_at_ms: end + 60_000,
     });
-    serde_json::to_string_pretty(&r).expect("json") + "\n"
+    json_text(&r).expect("json")
 }
 
 fn example() -> String {

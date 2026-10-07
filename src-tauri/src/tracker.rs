@@ -1,10 +1,10 @@
-//! The tracking loop (PLAN §6, §11.2).
+//! The tracking loop (DESIGN §2.2, DESIGN §11.7).
 //!
 //! [`Tracker`] samples and stores; [`Driver::step`] is one iteration of the loop — a tick
 //! while a session is open, an idle check while auto mode waits for input — and returns
 //! when to run next. Both are driven directly by tests with a synthetic clock.
 //! [`TrackerThread`] only adds timing: absolute deadlines, prompt stop, and it exists only
-//! while there is something to do (zero wakeups when idle, PLAN §1).
+//! while there is something to do (zero wakeups when idle, DESIGN §1).
 
 use std::io;
 use std::sync::atomic::Ordering;

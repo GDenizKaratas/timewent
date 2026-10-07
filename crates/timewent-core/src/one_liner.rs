@@ -1,4 +1,4 @@
-//! One copyable line per summary (PLAN §11.4); also the seed for a future local-LLM
+//! One copyable line per summary (DESIGN §9); also the seed for a future local-LLM
 //! explanation, so it states facts only.
 
 use crate::lang::Lang;

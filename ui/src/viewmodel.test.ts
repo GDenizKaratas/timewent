@@ -129,7 +129,7 @@ describe('autoHint', () => {
   })
 })
 
-describe('one duration grammar (§16.2): bright = clock, dim = compact', () => {
+describe('one duration grammar (DESIGN §9): bright = clock, dim = compact', () => {
   const CLOCK = /^\d+:\d\d(:\d\d)?$/
   const COMPACT = /^\d+(h\d\dm|m|s)$/
   const v = view({
@@ -158,7 +158,7 @@ describe('one duration grammar (§16.2): bright = clock, dim = compact', () => {
   })
 })
 
-describe('details cap (§16.3)', () => {
+describe('details cap (DESIGN §11.2)', () => {
   afterEach(() => setLang('en'))
   const d = Array.from({ length: 9 }, (_, i) => ({ detail: `f${i}`, time: '1m' }))
   it('shows 5, then "+n more" as an inline toggle; all when asked', () => {
@@ -172,7 +172,7 @@ describe('details cap (§16.3)', () => {
   })
 })
 
-describe('receiptParts (§16.1 line 2)', () => {
+describe('receiptParts (DESIGN §11.4 line 2)', () => {
   afterEach(() => setLang('en'))
   const v = view({
     active_ms: 70 * MIN, passive_ms: 11 * MIN, away_ms: 13 * MIN, longest_focus_ms: 21 * MIN,
@@ -196,7 +196,7 @@ describe('receiptParts (§16.1 line 2)', () => {
   })
 })
 
-describe('summarySentence (§17, §20: label dim / value bright, one line)', () => {
+describe('summarySentence (DESIGN §11.2, DESIGN §11.2: label dim / value bright, one line)', () => {
   afterEach(() => setLang('en'))
   const v = view({
     longest_focus_ms: 21 * MIN,
@@ -228,7 +228,7 @@ describe('summarySentence (§17, §20: label dim / value bright, one line)', () 
   })
 })
 
-describe('howLines (§15: away · ♪)', () => {
+describe('howLines (DESIGN §11.2: away · ♪)', () => {
   afterEach(() => setLang('en'))
   const full = view({
     rows: [row('a', MIN, 1)],
@@ -254,7 +254,7 @@ describe('howLines (§15: away · ♪)', () => {
     expect(sp?.source).toBeUndefined()
   })
 
-  it('away · ♪ (≤ 2) — focus moved to the summary sentence (§17)', () => {
+  it('away · ♪ (≤ 2) — focus moved to the summary sentence (DESIGN §11.2)', () => {
     expect(howLines(full).map((l) => [l.key, l.source ? `${l.value} · ${l.source}` : l.value, l.time ?? null])).toEqual([
       ['Away', '13m', null],
       ['♪', 'lofi beats to code to · YouTube', '33m'],
@@ -549,7 +549,7 @@ describe('rangeTabs', () => {
     ])
     expect(rangeTabs({ kind: 'week' }, true).map((t) => t.selected)).toEqual([false, false, true])
   })
-  it('none selected while viewing a past session (§19)', () => {
+  it('none selected while viewing a past session (DESIGN §11.5)', () => {
     expect(rangeTabs({ kind: 'session', id: 8 }, true, true).map((t) => t.selected)).toEqual([false, false, false])
   })
   it('disables session before any session exists', () => {
@@ -582,6 +582,15 @@ describe('in use', () => {
   it('drops the away clause when there was none', () => {
     expect(inUseTitle(view({ active_ms: 60_000, passive_ms: 0 }))).toBe('Active 1:00 + reading 0:00')
   })
+  it('names uncredited passthrough time on its own line, all entries; omitted when empty', () => {
+    const ns = view({ ...v, not_shown: [{ label: 'timewent', ms: 95_000 }, { label: 'Raycast', ms: 12_000 }] })
+    expect(inUseTitle(ns).split('\n').pop()).toBe('Not shown: timewent 1m35s · Raycast 12s')
+    setLang('tr')
+    expect(inUseTitle(ns).split('\n').pop()).toBe('Gösterilmeyen: timewent 1dk 35sn · Raycast 12sn')
+    setLang('en')
+    expect(inUseTitle(v)).not.toMatch(/Not shown/)
+  })
+
   it('then every kind of time with its share, on its own line (the panel no longer shows them)', () => {
     const withKinds = view({
       ...v,

@@ -1,6 +1,6 @@
 // Fake backend for `npm run dev` in a plain browser (and for tests).
 // Generates a deterministic, internally consistent timeline from a script and the clock, so
-// the UI sees the same shapes as §6/§11/§13: sessions tick, contexts change, rows sum to totals,
+// the UI sees the same shapes as DESIGN §11.10: sessions tick, contexts change, rows sum to totals,
 // support work rolls up into a project row, user activities group their members.
 import type {
   Activity, Backend, BreakdownItem, Category, Config, DetailTime, Prefs, Range, Row, RowKind, SeenSources,
@@ -22,8 +22,8 @@ type Item = {
   details?: [string, number][] // detail, weight
   passive_s?: number
   interrupt?: { label: string; ms: number }
-  proj?: { name: string; via: 'code' | 'match' | 'support' } // §11.1 attribution
-  bg?: { label: string; title: string | null } // §14.2 audio playing behind the frontmost app
+  proj?: { name: string; via: 'code' | 'match' | 'support' } // DESIGN §7.1 attribution
+  bg?: { label: string; title: string | null } // DESIGN §8.4 audio playing behind the frontmost app
 }
 
 const ctx = (key: string, label: string, category: Category, src: Partial<Pick<Ctx, 'app' | 'domain'>> = {}): Ctx => ({
@@ -176,8 +176,8 @@ function activityOf(c: Ctx, acts: readonly Activity[]): { name: string; member: 
 type RowOf = { key: string; label: string; kind: RowKind; member?: { key: string; label: string } }
 function rowOf(seg: SegmentDto, cfg: Config): RowOf | null {
   const m = META.get(seg)
-  if (!m || seg.key.startsWith('pass:')) return null // §10.2: in use, never a row
-  const act = activityOf(m.ctx, cfg.activities) // §13.1: user intent beats inference
+  if (!m || seg.key.startsWith('pass:')) return null // DESIGN §8.5: in use, never a row
+  const act = activityOf(m.ctx, cfg.activities) // DESIGN §7.3: user intent beats inference
   if (act) return { key: `act:${act.name}`, label: act.name, kind: 'activity', member: act.member }
   if (cfg.attribute_projects && m.item.proj) return { key: `code:${m.item.proj.name}`, label: m.item.proj.name, kind: 'project' }
   return { key: seg.key, label: seg.label, kind: 'context' }
@@ -242,8 +242,9 @@ function toView(range: Range, segments: SegmentDto[], cfg: Config, l: Lang = 'en
   let total = 0, active = 0, passive = 0, away = 0, longest = 0, switches = 0
   let prevRow: string | null = null
   const rows = new Map<string, Acc>()
-  const kinds = new Map<Category, number>() // §14.1: each segment's own category
-  const listening = new Map<string, { label: string; title: string | null; ms: number }>() // §14.2
+  const hidden = new Map<string, number>() // DESIGN §8.5: pass: time, in use but no row
+  const kinds = new Map<Category, number>() // DESIGN §8.3: each segment's own category
+  const listening = new Map<string, { label: string; title: string | null; ms: number }>() // DESIGN §8.4
   for (const s of segments) {
     if (s.kind === 'gap') continue
     const dur = s.end_ms - s.start_ms
@@ -260,7 +261,10 @@ function toView(range: Range, segments: SegmentDto[], cfg: Config, l: Lang = 'en
       listening.set(k, l)
     }
     const r = rowOf(s, cfg)
-    if (!r) continue
+    if (!r) {
+      if (s.key.startsWith('pass:')) hidden.set(s.label, (hidden.get(s.label) ?? 0) + dur)
+      continue
+    }
     if (s.kind === 'focus') longest = Math.max(longest, dur)
     if (prevRow !== null && prevRow !== r.key) switches++
     prevRow = r.key
@@ -305,6 +309,7 @@ function toView(range: Range, segments: SegmentDto[], cfg: Config, l: Lang = 'en
       .map(([category, ms]) => ({ category, ms, share: inUse > 0 ? ms / inUse : 0 }))
       .sort((a, b) => b.ms - a.ms),
     listening: [...listening.values()].sort((a, b) => b.ms - a.ms),
+    not_shown: [...hidden].map(([label, ms]) => ({ label, ms })).sort((a, b) => b.ms - a.ms),
   }
 }
 
@@ -333,7 +338,7 @@ export function createMockBackend(
     always_on_top: true,
     peek_shortcut: 'Alt+Shift+Space',
     auto_track: opts.auto ?? false,
-    launch_at_login: true, // §22: registered as a login item on first launch
+    launch_at_login: true, // DESIGN §11.8: registered as a login item on first launch
     auto_split_after_s: 1800,
     language: opts.language ?? 'system',
   }
@@ -403,7 +408,7 @@ export function createMockBackend(
       const s = sessions.find((x) => x.id === range.id)
       return toView(range, s ? segsOf(s).segs : [], config, lang())
     }
-    // today: since local midnight; week: since local monday 00:00 (§10.2); all: everything.
+    // today: since local midnight; week: since local monday 00:00 (DESIGN §11.10); all: everything.
     const dow = (new Date(now()).getDay() + 6) % 7 // monday = 0
     const from = range.kind === 'all' ? -Infinity : dayAt(now(), range.kind === 'week' ? -dow : 0, 0, 0)
     const segs: SegmentDto[] = []

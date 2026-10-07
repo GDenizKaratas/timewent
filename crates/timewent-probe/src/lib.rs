@@ -1,4 +1,4 @@
-//! Sampling the frontmost context (PLAN §5).
+//! Sampling the frontmost context (DESIGN §3.2).
 //!
 //! The impure layer (`mac`) only reads raw values from the OS; every decision about them lives
 //! in small pure modules ([`idle`], [`frontmost`], [`url_script`], [`url_cache`]) that are unit

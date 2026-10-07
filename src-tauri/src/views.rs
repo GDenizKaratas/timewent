@@ -1,4 +1,4 @@
-//! Core results → IPC shapes (PLAN §6). Pure: samples and config in, DTOs out — no store,
+//! Core results → IPC shapes (DESIGN §11.10). Pure: samples and config in, DTOs out — no store,
 //! no clock, no locks, so every view the ui shows is unit-tested here.
 
 use timewent_core::{
@@ -36,7 +36,7 @@ pub fn build_current_from(
         .find(|&i| presence[i] != Presence::Away)
         .or_else(|| (0..=last).rev().find(real))?;
     let ctx = derive_context(&samples[ctx_at], config);
-    // Inside an activity (§13.1) the pill shows the activity and the member app; the
+    // Inside an activity (DESIGN §11.1) the pill shows the activity and the member app; the
     // grouping key is the activity's.
     let member = activity_member(&samples[ctx_at], config);
     let group_key = member.as_ref().map_or_else(
@@ -91,7 +91,7 @@ pub fn build_current_from(
 }
 
 /// `open` is the session being tracked, if any. Without one, everything but permissions is
-/// empty (PLAN §6 contract note), whatever `current` still holds.
+/// empty (DESIGN §11.10 contract note), whatever `current` still holds.
 pub fn build_status(
     open: Option<&SessionMeta>,
     current: Option<Current>,

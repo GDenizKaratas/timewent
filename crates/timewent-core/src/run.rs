@@ -1,4 +1,4 @@
-//! Runs: maximal same-key stretches of samples, and transient absorption (PLAN §3.5 steps 2–6).
+//! Runs: maximal same-key stretches of samples, and transient absorption (DESIGN §6 steps 2–6).
 
 use std::collections::BTreeMap;
 
@@ -84,7 +84,7 @@ impl Run {
     }
 
     /// Absorbed into a neighbour: short runs, and pass-through runs shorter than a glance
-    /// (§21.1 — a longer look at timewent or a launcher is credited to nobody).
+    /// (DESIGN §6.4 — a longer look at timewent or a launcher is credited to nobody).
     fn is_transient(&self, config: &Config) -> bool {
         !self.away
             && (self.ms() < config.transient_ms()
@@ -337,7 +337,7 @@ pub(crate) fn group_runs(
     runs
 }
 
-/// Single left-to-right pass over a gap-free block (PLAN §3.5 step 4).
+/// Single left-to-right pass over a gap-free block (DESIGN §6.2 step 4).
 ///
 /// A transient joins an adjacent host: the previous run, else the next one. Hosts are never
 /// away runs, so absorbed activity can never be counted as away time. With no host on

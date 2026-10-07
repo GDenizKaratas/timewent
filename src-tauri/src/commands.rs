@@ -1,4 +1,4 @@
-//! IPC commands (PLAN §6). Thin: each one delegates to [`Engine`](crate::engine::Engine).
+//! IPC commands (DESIGN §11.10). Thin: each one delegates to [`Engine`](crate::engine::Engine).
 //! Async so none of them runs on (and blocks) the main thread.
 
 use std::path::Path;
@@ -46,7 +46,7 @@ pub async fn export_json(range: Range, path: String, state: State<'_, AppState>)
     Ok(written.display().to_string())
 }
 
-/// Past sessions for the data tab (PLAN §18), newest first.
+/// Past sessions for the data tab (DESIGN §11.5), newest first.
 #[tauri::command]
 pub async fn sessions_overview(
     limit: u32,
@@ -62,13 +62,13 @@ pub async fn delete_session(id: i64, state: State<'_, AppState>) -> Result<()> {
     state.engine.delete_session(id)
 }
 
-/// Apps and sites used in the last 30 days, for the activity editor (§13.1).
+/// Apps and sites used in the last 30 days, for the activity editor (DESIGN §7.3).
 #[tauri::command]
 pub async fn seen_sources(state: State<'_, AppState>) -> Result<timewent_core::SeenSources> {
     state.engine.seen_sources()
 }
 
-/// Copies the export document to the macOS pasteboard natively (§23.1): the webview's
+/// Copies the export document to the macOS pasteboard natively (DESIGN §11.10): the webview's
 /// clipboard API refuses writes that follow an awaited command (no user activation).
 #[tauri::command]
 pub async fn copy_json(range: Range, app: AppHandle, state: State<'_, AppState>) -> Result<()> {

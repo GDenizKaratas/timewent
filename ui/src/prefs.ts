@@ -1,4 +1,4 @@
-// Per-viewer UI conveniences (§17: details open/closed). Storage can be missing or throw
+// Per-viewer UI conveniences (DESIGN §11.2: details open/closed). Storage can be missing or throw
 // (private mode, blocked site data), so every access is guarded and falls back to a default.
 import { t } from './i18n'
 

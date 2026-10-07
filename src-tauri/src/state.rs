@@ -23,7 +23,7 @@ pub struct AppState {
     pub db_path: PathBuf,
     prefs: Mutex<Prefs>,
     prefs_path: PathBuf,
-    /// Last window top-left, kept across launches (§22: "starts at its last position").
+    /// Last window top-left, kept across launches (DESIGN §11.8: "starts at its last position").
     window_path: PathBuf,
     pub peek: Mutex<Peek>,
     /// As last reported by the ui (`set_layout`).
@@ -60,7 +60,7 @@ impl AppState {
         crate::language::resolve(self.prefs().language, &crate::language::system_preferred())
     }
 
-    /// §22 first run: register (or not) per the default, then write the setting down so it
+    /// DESIGN §11.8 first run: register (or not) per the default, then write the setting down so it
     /// is never applied again — the user's later choice in System Settings stands. Only a
     /// built bundle does this; a dev binary leaves everything untouched.
     pub fn apply_first_launch_at_login(&self, app: &AppHandle, on: bool) {
@@ -217,13 +217,14 @@ mod tests {
     fn state_with(language: LanguagePref) -> AppState {
         let now = crate::clock::now_ms();
         let mut store = Store::open_in_memory().expect("store");
-        let id = store.start_session(now - 60_000).expect("session");
-        // 20s coding, a 2s YouTube peek (absorbed), 20s coding: one explain line.
-        for i in 0..42 {
-            let s = if (20..22).contains(&i) {
-                crate::testkit::web(now - 60_000 + i * 1000, "https://youtube.com/w", "v")
+        let id = store.start_session(now - 300_000).expect("session");
+        // 70s coding, 70s ChatGPT (research for p), 70s coding: one `why` worth reporting.
+        let start = now - 300_000;
+        for i in 0..210 {
+            let s = if (70..140).contains(&i) {
+                crate::testkit::web(start + i * 1000, "https://chatgpt.com/c/1", "x")
             } else {
-                crate::testkit::code(now - 60_000 + i * 1000, "p", "a.rs")
+                crate::testkit::code(start + i * 1000, "p", "a.rs")
             };
             store.append(id, &s).expect("append");
         }
@@ -262,14 +263,14 @@ mod tests {
 
     #[test]
     fn exports_speak_the_language_in_the_prefs() {
-        // §23.2a: the user's prefs said "tr", the export's `why` came out in English.
+        // DESIGN §10: the user's prefs said "tr", the export's `why` came out in English.
         let tr = state_with(LanguagePref::Tr)
             .export_text(Range::Today)
             .expect("tr");
-        assert!(tr.contains("YouTube (2sn) bu etkinliğe katıldı"), "{tr}");
+        assert!(tr.contains("ChatGPT, p için araştırma sayıldı"), "{tr}");
         let en = state_with(LanguagePref::En)
             .export_text(Range::Today)
             .expect("en");
-        assert!(en.contains("absorbed YouTube (2s)"), "{en}");
+        assert!(en.contains("ChatGPT counted as research for p"), "{en}");
     }
 }

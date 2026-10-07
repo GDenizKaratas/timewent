@@ -1,8 +1,8 @@
-//! What a view or export covers (PLAN §6 `Range`) and how a session is stored.
+//! What a view or export covers (DESIGN §11.10 `Range`) and how a session is stored.
 
 use serde::{Deserialize, Serialize};
 
-/// A tracking session as stored (PLAN §4, §6 `SessionMeta`).
+/// A tracking session as stored (DESIGN §12, DESIGN §11.10 `SessionMeta`).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SessionMeta {
     pub id: i64,
@@ -10,7 +10,7 @@ pub struct SessionMeta {
     pub ended_at_ms: Option<i64>,
 }
 
-/// Which samples a view covers (PLAN §6 `Range`, §10.2). Resolving `Today` / `Week` to
+/// Which samples a view covers (DESIGN §11.10 `Range`, DESIGN §11.10). Resolving `Today` / `Week` to
 /// timestamps needs a clock and time zone, so that happens outside core.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -21,7 +21,7 @@ pub enum Range {
     Today,
     /// Local Monday 00:00 → now.
     Week,
-    /// Every session ever recorded (PLAN §19: "download all").
+    /// Every session ever recorded (DESIGN §10: "download all").
     All,
 }
 

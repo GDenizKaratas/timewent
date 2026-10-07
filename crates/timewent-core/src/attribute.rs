@@ -1,4 +1,4 @@
-//! Project attribution (PLAN §11.1): which project a segment was *for*, not which app it was.
+//! Project attribution (DESIGN §7.1): which project a segment was *for*, not which app it was.
 //!
 //! - known projects: labels of code-editor contexts seen in the range (case-insensitive);
 //! - direct match, per sample while segmenting: a code repo URL or a window-title token;
@@ -57,7 +57,7 @@ impl Projects {
     }
 
     /// Records the project of a code context; `true` if it was not known yet. Activity
-    /// members define no projects: your grouping beats inference (§13.1).
+    /// members define no projects: your grouping beats inference (DESIGN §7.3).
     pub(crate) fn learn(
         &mut self,
         sample: &Sample,

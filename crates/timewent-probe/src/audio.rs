@@ -1,4 +1,4 @@
-//! What is playing (PLAN §14.2). Pure: who holds audio output comes in, one source and how to
+//! What is playing (DESIGN §3.2). Pure: who holds audio output comes in, one source and how to
 //! ask it for a title go out. The OS reads live in `mac::power` / `mac::workspace`.
 
 use timewent_core::{web_host, Category, Config};

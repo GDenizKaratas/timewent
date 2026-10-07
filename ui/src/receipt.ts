@@ -1,4 +1,4 @@
-// §16.1 stop = receipt, §16.4 default range. Pure state rules; app.ts wires them.
+// DESIGN §11.4 stop = receipt, DESIGN §11.2 default range. Pure state rules; app.ts wires them.
 import type { Range, SessionMeta, Status } from './types'
 
 /** What the user picked: a range, 'session' (follow the latest session), or null (no pick yet). */

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createMockBackend } from './mock'
+import { pinLanguages } from './test-setup'
 import type { View } from './types'
 
 function clock(start = new Date(2026, 9, 6, 15, 0).getTime()) {
@@ -10,7 +11,7 @@ function clock(start = new Date(2026, 9, 6, 15, 0).getTime()) {
 function expectConsistent(v: View) {
   const span = (k: string) =>
     v.segments.filter((s) => s.kind === k).reduce((a, s) => a + s.end_ms - s.start_ms, 0)
-  // passthrough (pass:*) time counts toward in-use (§10.2) but never gets a row
+  // passthrough (pass:*) time counts toward in-use (DESIGN §8.5) but never gets a row
   const nonGap = v.segments.filter((s) => s.kind !== 'gap').reduce((a, s) => a + s.end_ms - s.start_ms, 0)
   const pass = v.segments.filter((s) => s.key.startsWith('pass:')).reduce((a, s) => a + s.end_ms - s.start_ms, 0)
   expect(v.total_ms).toBe(nonGap)
@@ -144,7 +145,7 @@ describe('mock get_info', () => {
     expect(info.data_path).toMatch(/timewent\.db/)
     expect(info.version).toMatch(/^\d+\.\d+\.\d+/)
   })
-  it('labels away and gap segments "away" / "gap" with no category, per §6 notes', async () => {
+  it('labels away and gap segments "away" / "gap" with no category, per DESIGN §11.10 notes', async () => {
     const api = createMockBackend({ now: () => new Date(2026, 9, 6, 15, 0).getTime() })
     const v = await api.get_view({ kind: 'today' })
     for (const s of v.segments.filter((x) => x.kind === 'away' || x.kind === 'gap')) {
@@ -154,7 +155,7 @@ describe('mock get_info', () => {
   })
 })
 
-describe('mock status.current (§10.2 contract)', () => {
+describe('mock status.current (DESIGN §11.1 contract)', () => {
   it('context_ms equals that context row in the session view', async () => {
     const c = clock()
     const api = createMockBackend({ now: c.now })
@@ -196,7 +197,7 @@ describe('mock prefs', () => {
     const api = createMockBackend({ now: clock().now })
     expect(await api.get_prefs()).toEqual({
       always_on_top: true, peek_shortcut: 'Alt+Shift+Space', auto_track: false, auto_split_after_s: 1800, language: 'system',
-      launch_at_login: true, // §22: on by default
+      launch_at_login: true, // DESIGN §11.8: on by default
     })
     const next = {
       always_on_top: false, peek_shortcut: 'Ctrl+Alt+T', auto_track: true, auto_split_after_s: 900, language: 'tr' as const,
@@ -278,7 +279,7 @@ describe('mock idle scenario', () => {
   })
 })
 
-describe('mock §11 / §13 shapes', () => {
+describe('mock DESIGN §7 / DESIGN §7.3 shapes', () => {
   const sessionView = async (api: ReturnType<typeof createMockBackend>) =>
     api.get_view({ kind: 'session', id: (await api.get_status()).session_id ?? -1 })
 
@@ -374,7 +375,7 @@ describe('mock §11 / §13 shapes', () => {
   })
 })
 
-describe('mock §14', () => {
+describe('mock DESIGN §8', () => {
   it('categories cover in-use time by each segment\'s own kind; shares sum to 1', async () => {
     const api = createMockBackend({ now: clock().now })
     const v = await api.get_view({ kind: 'session', id: (await api.get_status()).session_id ?? -1 })
@@ -392,7 +393,7 @@ describe('mock §14', () => {
   })
 })
 
-describe('mock §14 final shapes', () => {
+describe('mock DESIGN §8 final shapes', () => {
   it('config carries app_categories (bundle id → category)', async () => {
     const cfg = await createMockBackend({ now: clock().now }).get_config()
     expect(cfg.app_categories['com.spotify.client']).toBe('media')
@@ -405,7 +406,7 @@ describe('mock §14 final shapes', () => {
   })
 })
 
-describe('mock §19 history', () => {
+describe('mock DESIGN §11.5 history', () => {
   it('sessions_overview: newest first, paged, in-use and top row label per session', async () => {
     const api = createMockBackend({ now: clock().now })
     const page1 = await api.sessions_overview(3, 0)
@@ -448,5 +449,35 @@ describe('mock export_json_string (copy = json)', () => {
     expect(doc.summary.rows.length).toBeGreaterThan(0)
     expect(doc.segments.length).toBeGreaterThan(0)
     expect(doc.sessions.map((s: { id: number }) => s.id)).toEqual([id])
+  })
+})
+
+describe('mock language: system follows the OS preference, whatever the host is', () => {
+  it('system + a Turkish Mac → Turkish explain lines and one-liner', async () => {
+    pinLanguages(['tr-TR', 'en-US'])
+    const api = createMockBackend({ now: clock().now })
+    const v = await api.get_view({ kind: 'session', id: (await api.get_status()).session_id ?? -1 })
+    expect(v.one_liner).toMatch(/kullanımda/)
+  })
+  it('system + an English Mac → English', async () => {
+    pinLanguages(['en-GB'])
+    const api = createMockBackend({ now: clock().now })
+    const v = await api.get_view({ kind: 'session', id: (await api.get_status()).session_id ?? -1 })
+    expect(v.one_liner).toMatch(/ in use · /)
+  })
+})
+
+describe('mock not_shown (DESIGN §8.5)', () => {
+  it('lists pass: time by label — in use, never a row, rows + not shown = in use', async () => {
+    const api = createMockBackend({ now: clock().now })
+    const v = await api.get_view({ kind: 'session', id: (await api.get_status()).session_id ?? -1 })
+    expect(v.not_shown).toEqual([{ label: 'timewent', ms: 6_000 }])
+    const rows = v.rows.reduce((a, r) => a + r.ms, 0)
+    expect(rows + v.not_shown.reduce((a, n) => a + n.ms, 0)).toBe(v.active_ms + v.passive_ms)
+  })
+  it('empty when timewent is counted as itself', async () => {
+    const api = createMockBackend({ now: clock().now })
+    await api.set_config({ ...(await api.get_config()), count_self: true })
+    expect((await api.get_view({ kind: 'today' })).not_shown).toEqual([])
   })
 })

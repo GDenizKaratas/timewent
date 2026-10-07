@@ -1,4 +1,4 @@
-//! timewent desktop app (PLAN §6): wires probe → store → core to the ui.
+//! timewent desktop app (DESIGN §11.10): wires probe → store → core to the ui.
 //!
 //! Testable logic lives in Tauri-free modules ([`views`], [`tracker`], [`engine`],
 //! [`config_file`], [`clock`]); the rest is thin glue.
@@ -184,7 +184,7 @@ fn setup(app: &mut App) -> error::Result<()> {
     } else {
         window::show(&handle);
     }
-    // §22: on by default — registered once, the first time this version runs from a bundle.
+    // DESIGN §11.8: on by default — registered once, the first time this version runs from a bundle.
     if first_time {
         app.state::<AppState>()
             .apply_first_launch_at_login(&handle, launch_at_login);

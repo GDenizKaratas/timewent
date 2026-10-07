@@ -1,4 +1,4 @@
-//! Open at login (PLAN §22). Pure decisions; `lib.rs` performs them with
+//! Open at login (DESIGN §11.8). Pure decisions; `lib.rs` performs them with
 //! `tauri-plugin-autostart` (a LaunchAgent that runs the bundle's executable with `--login`).
 
 use std::path::Path;

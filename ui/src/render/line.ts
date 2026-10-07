@@ -1,4 +1,4 @@
-// §20 summary lines: one line, always. label dim · name bright (the only part that shrinks,
+// DESIGN §11.2 summary lines: one line, always. label dim · name bright (the only part that shrinks,
 // with an ellipsis) · value bright (nowrap, compact). Parts are joined by a dim " · ".
 import { h } from '../dom'
 import type { LinePart } from '../viewmodel'

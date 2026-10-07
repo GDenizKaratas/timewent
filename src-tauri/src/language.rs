@@ -1,4 +1,4 @@
-//! Which language the app speaks (PLAN §13.3): the user's pref, or macOS's preferred
+//! Which language the app speaks (DESIGN §11.9): the user's pref, or macOS's preferred
 //! languages when the pref is `system`.
 
 use serde::{Deserialize, Serialize};

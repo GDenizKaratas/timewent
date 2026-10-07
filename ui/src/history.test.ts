@@ -7,7 +7,7 @@ const at = (d: number, h: number, m: number) => new Date(2026, 9, d, h, m).getTi
 const closed: SessionOverview = { id: 8, started_at_ms: at(7, 0, 36), ended_at_ms: at(7, 0, 57), in_use_ms: 18 * 60_000, top_label: 'bank-agent-lab' }
 const open: SessionOverview = { id: 9, started_at_ms: at(7, 9, 5), ended_at_ms: null, in_use_ms: 42 * 60_000, top_label: null }
 
-describe('historyRow (§19)', () => {
+describe('historyRow (DESIGN §11.5)', () => {
   afterEach(() => setLang('en'))
   it('07.10  00:36–00:57  18m  bank-agent-lab, deletable', () => {
     expect(historyRow(closed)).toEqual({
@@ -39,7 +39,7 @@ describe('delete confirm (inline, one at a time)', () => {
   })
 })
 
-describe('confirm keeps the row identifiable (§19 fix)', () => {
+describe('confirm keeps the row identifiable (DESIGN §11.5 fix)', () => {
   it('the row stays, highlighted; the confirm sits under it', () => {
     expect(confirmLayout(8, 8)).toEqual({ highlight: true, confirmBelow: true })
     expect(confirmLayout(7, 8)).toEqual({ highlight: false, confirmBelow: false })
@@ -47,7 +47,7 @@ describe('confirm keeps the row identifiable (§19 fix)', () => {
   })
 })
 
-describe('past-session context strip (§19)', () => {
+describe('past-session context strip (DESIGN §11.5)', () => {
   afterEach(() => setLang('en'))
   it('opening a history row shows that session with a strip; back returns to history', () => {
     const p = nextPast(null, { type: 'open', session: closed })

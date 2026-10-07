@@ -1,5 +1,5 @@
 //! Is media keeping the display awake? Decided from the system-wide power-assertion levels
-//! (PLAN §10.1): video players and call apps hold `PreventUserIdleDisplaySleep` while they
+//! (DESIGN §4): video players and call apps hold `PreventUserIdleDisplaySleep` while they
 //! play. Only the aggregate level is read — never which app, never what is playing.
 
 /// Assertion types that keep the display on. `NoDisplaySleepAssertion` is the legacy name

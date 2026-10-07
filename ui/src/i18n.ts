@@ -1,4 +1,4 @@
-// Two languages, one dictionary each (§13.3). The app name is always "timewent". Data — app
+// Two languages, one dictionary each (DESIGN §11.9). The app name is always "timewent". Data — app
 // names, titles, projects, activity names — is never translated; explain lines and the one-liner
 // arrive already translated from the backend.
 
@@ -14,6 +14,7 @@ const en = {
   // panel
   in_use: 'In use {t}',
   in_use_title: 'Active {a} + reading {r}',
+  not_shown: 'Not shown: {x}',
   in_use_title_away: 'Active {a} + reading {r} · away {w} not counted',
   show_all: 'Show all (+{n})',
   show_less: 'Show less',
@@ -218,6 +219,7 @@ const tr: Record<Key, string> = {
   press_space: 'Space ile başlat',
   in_use: 'Kullanımda {t}',
   in_use_title: 'Aktif {a} + okuma {r}',
+  not_shown: 'Gösterilmeyen: {x}',
   in_use_title_away: 'Aktif {a} + okuma {r} · uzakta {w} sayılmadı',
   show_all: 'Tümü (+{n})',
   show_less: 'Daha az',

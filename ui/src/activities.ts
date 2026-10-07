@@ -1,4 +1,4 @@
-// §13.1 activities: pure helpers for the settings list and the edit view.
+// DESIGN §7.3 activities: pure helpers for the settings list and the edit view.
 import { formatCompact } from './format'
 import { t } from './i18n'
 import type { Activity, SeenSources } from './types'

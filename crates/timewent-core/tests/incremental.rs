@@ -1,5 +1,5 @@
 //! Property: a `Segmenter` fed one sample at a time always equals `segment` over the same
-//! prefix (PLAN §11.5) — over every fixture and many pseudo-random streams.
+//! prefix (DESIGN §2.2) — over every fixture and many pseudo-random streams.
 
 use std::fs;
 use std::path::PathBuf;

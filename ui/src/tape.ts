@@ -73,7 +73,7 @@ const GLYPHS: Record<Tone, string> = {
 
 export const tapeGlyph = (tone: Tone): string => GLYPHS[tone]
 
-// ── compact tape beside `▸ details` (PLAN "Tape beside details") ───────────────
+// ── compact tape beside `▸ details` (DESIGN §11.2) ───────────────
 const CH_PX = 7.25 // 12px mono advance
 const LABEL_PAD_PX = 8 // disclosure button padding
 const ROW_GAP_PX = 12

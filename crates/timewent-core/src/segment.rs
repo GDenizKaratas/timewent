@@ -1,4 +1,4 @@
-//! Samples → explainable time segments: `segment` (PLAN §3.5).
+//! Samples → explainable time segments: `segment` (DESIGN §6).
 
 use serde::{Deserialize, Serialize};
 
@@ -28,13 +28,13 @@ pub struct Segment {
     /// Absorbed transient runs, chronological.
     pub interruptions: Vec<Interruption>,
     pub evidence: Vec<Evidence>,
-    /// The project this time was for (§11.1); `None` = its own context.
+    /// The project this time was for (DESIGN §7.1); `None` = its own context.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub project: Option<String>,
-    /// Activity segments: time per member app / site, ms desc (§13.1).
+    /// Activity segments: time per member app / site, ms desc (DESIGN §7.3).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub members: Vec<MemberTime>,
-    /// Background audio during this segment (§14.2), ms desc. Never part of in-use time.
+    /// Background audio during this segment (DESIGN §8.4), ms desc. Never part of in-use time.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub listening: Vec<ListenTime>,
 }
@@ -120,7 +120,7 @@ pub enum Evidence {
         ms: i64,
     },
     /// A pass-through run of glance length or more: in use, but credited to no activity
-    /// (§21.1).
+    /// (DESIGN §6.4).
     PassthroughNotCredited {
         label: String,
         ms: i64,
@@ -894,7 +894,7 @@ mod tests {
 
     #[test]
     fn passthrough_of_glance_length_or_more_is_never_credited_to_a_neighbour() {
-        // §21.1, from a real export: 95s of timewent was credited to PDFgear.
+        // DESIGN §6.4, from a real export: 95s of timewent was credited to PDFgear.
         let mut samples = seq(0, &[("A", 20)]);
         samples.extend(me(20_000, 10));
         samples.extend(seq(30_000, &[("B", 20)]));

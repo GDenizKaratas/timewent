@@ -24,7 +24,7 @@ const SYNTHETIC: &[&str] = &[
     "passthrough_not_credited",
 ];
 
-/// Scenarios run with defaults, except where they exercise a config (§13.1 activities).
+/// Scenarios run with defaults, except where they exercise a config (DESIGN §7.3 activities).
 fn config_for(name: &str) -> Config {
     match name {
         "activity_coding" => Config {
@@ -432,7 +432,7 @@ mod synth {
                 g.span(&vscode("lib.rs — timewent"), 30, typing);
             }
             // Code 60s → 10 min of YouTube with no input at all while the video plays →
-            // code 60s. Watching is passive, never away (PLAN §10.1).
+            // code 60s. Watching is passive, never away (DESIGN §4).
             "watching_video_no_input" => {
                 g.span(&vscode("main.rs — timewent"), 60, typing);
                 g.span(
@@ -445,7 +445,7 @@ mod synth {
                 );
                 g.span(&vscode("main.rs — timewent"), 60, typing);
             }
-            // §11.1: code 300s → ChatGPT 120s → docs.rs 90s → the project's GitHub PR 60s →
+            // DESIGN §7.1: code 300s → ChatGPT 120s → docs.rs 90s → the project's GitHub PR 60s →
             // code 180s → YouTube 15s → code 120s. ChatGPT and docs are research for
             // bank-agent-lab (between its code block and its PR); YouTube stays its own row.
             "project_research_session" => {
@@ -482,7 +482,7 @@ mod synth {
                 );
                 g.span(&vscode("risk_engine.py — bank-agent-lab"), 120, typing);
             }
-            // §13.1: coding = VS Code + iTerm2. VS Code 120s → iTerm2 60s → ChatGPT 90s (its
+            // DESIGN §7.3: coding = VS Code + iTerm2. VS Code 120s → iTerm2 60s → ChatGPT 90s (its
             // title names the project) → VS Code 120s → iTerm2 30s → VS Code 60s. One "coding"
             // row with a member breakdown; ChatGPT stays its own row: members define no
             // projects and anchor nothing.
@@ -503,7 +503,7 @@ mod synth {
                 g.span(&iterm, 30, typing);
                 g.span(&vscode("risk_engine.py — bank-agent-lab"), 60, typing);
             }
-            // §14.2: Spotify plays behind VS Code for 10 min, then YouTube is frontmost (and
+            // DESIGN §8.4: Spotify plays behind VS Code for 10 min, then YouTube is frontmost (and
             // plays itself) for 2 min. In-use is the 12 minutes of what was on screen; the
             // Spotify track is a parallel listening lane; YouTube in front is watching (media).
             "music_behind_code" => {
@@ -536,7 +536,7 @@ mod synth {
                     mousing,
                 );
             }
-            // §21.1, the user's session 15: System Settings 40s → 95s looking at timewent →
+            // DESIGN §6.4, the user's session 15: System Settings 40s → 95s looking at timewent →
             // PDFgear 30s. The 95s is in use but credited to no one (it used to go to PDFgear).
             "passthrough_not_credited" => {
                 g.span(

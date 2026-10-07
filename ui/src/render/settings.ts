@@ -1,4 +1,4 @@
-// In-panel settings (§13.2, §19): `[← back] settings`, then text tabs
+// In-panel settings (DESIGN §11.6, DESIGN §11.6): `[← back] settings`, then text tabs
 // `general  tracking  activities  history  keys`, each opening with one dim `#` purpose line.
 // Human labels with units in words; raw config keys only in tooltips.
 // The activity editor is a sub-view with `[← cancel]` on the left (back always sits left).
@@ -102,7 +102,7 @@ export function createSettings(el: HTMLElement, deps: SettingsDeps) {
   function tabBar() {
     return h(
       'div',
-      { class: 'tabs set-tabs', attrs: { role: 'tablist' } }, // no `·` here: 5 tabs must fit 340px (§19)
+      { class: 'tabs set-tabs', attrs: { role: 'tablist' } }, // no `·` here: 5 tabs must fit 340px (DESIGN §11.6)
       ...TABS.flatMap(([id, key]) => [
         choiceBtn(t(key), tab === id, () => {
           tab = id
@@ -169,7 +169,7 @@ export function createSettings(el: HTMLElement, deps: SettingsDeps) {
       say(`✗ ${String(e)}`, true),
     )
     const autoHintEl = h('div', { class: 'hint' }, autoHint(d.prefs.auto_split_after_s))
-    // §22: the backend registers / unregisters the login item as soon as the pref changes
+    // DESIGN §11.8: the backend registers / unregisters the login item as soon as the pref changes
     const login = check(
       t('launch_at_login'),
       d.prefs.launch_at_login,

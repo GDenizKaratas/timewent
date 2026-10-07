@@ -1,4 +1,4 @@
-// §15 "how" block: a key/value list — dim key column (~7ch), normal-weight value, one line each.
+// DESIGN §11.2 "how" block: a key/value list — dim key column (~7ch), normal-weight value, one line each.
 //   away    13:00
 //   focus   longest 21m · 4 switches
 //   kind    code 63% · ai 20% · web 10%

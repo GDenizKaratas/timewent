@@ -1,4 +1,4 @@
-// Typed wrappers over the §6 commands. Outside Tauri, the same calls go to mock.ts, which is
+// Typed wrappers over the DESIGN §11.10 commands. Outside Tauri, the same calls go to mock.ts, which is
 // loaded lazily so it never lands in the main bundle.
 import { invoke } from '@tauri-apps/api/core'
 import { isTauri } from './platform'

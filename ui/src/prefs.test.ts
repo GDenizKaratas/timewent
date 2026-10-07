@@ -11,7 +11,7 @@ const broken = {
   setItem: () => { throw new Error('QuotaExceeded') },
 }
 
-describe('details open state (§17, remembered per viewer)', () => {
+describe('details open state (DESIGN §11.2, remembered per viewer)', () => {
   it('collapsed by default', () => {
     expect(loadFlag('details', false, mem())).toBe(false)
   })

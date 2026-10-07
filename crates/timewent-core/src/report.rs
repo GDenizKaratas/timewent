@@ -1,4 +1,4 @@
-//! The export: `timewent.report.v3` (PLAN §21.2, §23.3). A compact narrative a person or
+//! The export: `timewent.report.v3` (DESIGN §10). A compact narrative a person or
 //! any LLM can read without a manual: totals, where time went (top 10), and per session the
 //! blocks that mattered (≥ 60 s) with the short visits summed up. Local times, whole seconds,
 //! plain names; `why` only where it changes the meaning. Pure: the time zone comes in as a name
@@ -20,7 +20,7 @@ use crate::summary::{summarize, RowKind, Summary};
 
 pub const REPORT_SCHEMA: &str = "timewent.report.v3";
 
-/// Blocks are at least this long; everything shorter is a short visit (§23.3).
+/// Blocks are at least this long; everything shorter is a short visit (DESIGN §10).
 pub const BLOCK_MIN_S: i64 = 60;
 /// `where` lists this many rows; the rest is `other_s`.
 pub const WHERE_TOP: usize = 10;
@@ -58,6 +58,9 @@ pub struct Report {
     pub listening: Vec<ListenOut>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sessions: Option<Vec<SessionOut>>,
+    /// Sessions with no block and under a minute in use (a relaunch, a quick check), folded.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub short_sessions: Option<ShortSessions>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub days: Option<Vec<Day>>,
     pub rules: Rules,
@@ -132,6 +135,12 @@ pub struct SessionOut {
     pub in_use_s: i64,
     pub blocks: Vec<Block>,
     pub short_visits: ShortVisits,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct ShortSessions {
+    pub count: usize,
+    pub in_use_s: i64,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -213,7 +222,23 @@ pub fn report(input: &ReportInput) -> Report {
     };
 
     let (where_, other_s) = where_rows(&summary);
-    let sessions = (!multi_day).then(|| sessions(input, &offset));
+    let (sessions, short_sessions) = if multi_day {
+        (None, None)
+    } else {
+        let all = sessions(input, &offset);
+        if matches!(input.range, Range::Session { .. }) {
+            (Some(all), None)
+        } else {
+            let (tiny, kept): (Vec<SessionOut>, Vec<SessionOut>) = all
+                .into_iter()
+                .partition(|s| s.blocks.is_empty() && s.in_use_s < BLOCK_MIN_S);
+            let folded = (!tiny.is_empty()).then(|| ShortSessions {
+                count: tiny.len(),
+                in_use_s: tiny.iter().map(|s| s.in_use_s).sum(),
+            });
+            (Some(kept), folded)
+        }
+    };
     let days = multi_day.then(|| days(input.samples, config, &offset));
 
     Report {
@@ -242,6 +267,7 @@ pub fn report(input: &ReportInput) -> Report {
             })
             .collect(),
         sessions,
+        short_sessions,
         days,
         rules: Rules {
             passive_after_s: config.passive_after_s,
@@ -293,7 +319,7 @@ fn where_rows(summary: &Summary) -> (Vec<WhereRow>, i64) {
                 .details
                 .iter()
                 .filter(|d| secs(d.ms) > 0)
-                .take(5)
+                .take(3)
                 .map(|d| NameSeconds {
                     name: d.detail.clone(),
                     seconds: secs(d.ms),
@@ -314,7 +340,7 @@ fn where_rows(summary: &Summary) -> (Vec<WhereRow>, i64) {
     (rows.into_iter().take(WHERE_TOP).collect(), other_s)
 }
 
-/// Evidence worth a sentence in the report (§23.3); the rest is mechanics.
+/// Evidence worth a sentence in the report (DESIGN §10); the rest is mechanics.
 fn meaningful(e: &Evidence) -> bool {
     matches!(
         e,
@@ -790,6 +816,99 @@ mod tests {
             [("11:00:00", "11:01:30", 90), ("12:00:00", "12:02:00", 120)]
         );
         assert!(r.days.is_none());
+    }
+
+    #[test]
+    fn tiny_sessions_fold_into_one_line_but_a_session_report_keeps_its_session() {
+        // 90s of work, then two blips (a relaunch, a quick check): no block, < 60s in use.
+        let mut samples = at(&[(Some(code("p")), 90)]);
+        let blip = |at_s: i64, n: i64| -> Vec<Sample> {
+            (0..n)
+                .map(|i| Sample {
+                    ts_ms: T0 + (at_s + i) * 1000,
+                    ..youtube()
+                })
+                .collect()
+        };
+        samples.extend(blip(3600, 4));
+        samples.extend(blip(7200, 20));
+        let sessions = vec![
+            SessionMeta {
+                id: 1,
+                started_at_ms: T0,
+                ended_at_ms: Some(T0 + 90_000),
+            },
+            SessionMeta {
+                id: 2,
+                started_at_ms: T0 + 3_600_000,
+                ended_at_ms: Some(T0 + 3_604_000),
+            },
+            SessionMeta {
+                id: 3,
+                started_at_ms: T0 + 7_200_000,
+                ended_at_ms: Some(T0 + 7_220_000),
+            },
+        ];
+        let r = build(
+            &Range::Today,
+            &samples,
+            &sessions,
+            &Config::default(),
+            Lang::En,
+        );
+        assert_eq!(r.sessions.as_ref().map(Vec::len), Some(1));
+        assert_eq!(
+            r.short_sessions,
+            Some(ShortSessions {
+                count: 2,
+                in_use_s: 24
+            })
+        );
+        let json = serde_json::to_value(&r).expect("json");
+        assert_eq!(
+            json["short_sessions"],
+            serde_json::json!({"count": 2, "in_use_s": 24})
+        );
+
+        let only_blip = blip(7200, 20);
+        let r = build(
+            &Range::Session { id: 3 },
+            &only_blip,
+            &sessions[2..],
+            &Config::default(),
+            Lang::En,
+        );
+        assert_eq!(
+            r.sessions.as_ref().map(Vec::len),
+            Some(1),
+            "a session report tells that session"
+        );
+        assert_eq!(r.short_sessions, None);
+        assert!(serde_json::to_value(&r)
+            .expect("json")
+            .get("short_sessions")
+            .is_none());
+    }
+
+    #[test]
+    fn where_rows_show_at_most_three_details() {
+        let files = ["a.rs", "b.rs", "c.rs", "d.rs", "e.rs"];
+        let spans: Vec<(Option<Sample>, i64)> = files
+            .iter()
+            .enumerate()
+            .map(|(i, f)| (Some(editor("p", f)), 30 + i as i64))
+            .collect();
+        let samples = at(&spans);
+        let r = build(
+            &Range::Today,
+            &samples,
+            &one_session(&samples),
+            &Config::default(),
+            Lang::En,
+        );
+        let top = r.where_[0].top_details.as_ref().expect("details");
+        let names: Vec<&str> = top.iter().map(|d| d.name.as_str()).collect();
+        assert_eq!(names, ["e.rs", "d.rs", "c.rs"]);
     }
 
     #[test]

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { setLang } from './i18n'
-import { clockRange, clockTime, formatClockShort, formatCompact, formatDuration } from './format'
+import { clockRange, clockTime, formatClockShort, formatCompact, formatDuration, formatLong } from './format'
 
 const at = (h: number, m: number, s = 0) => new Date(2026, 9, 6, h, m, s).getTime()
 
@@ -53,6 +53,18 @@ describe('formatClockShort (h:mm, receipts)', () => {
     expect(formatClockShort((74 * 60 + 59) * 1000)).toBe('1:14')
     expect(formatClockShort(42 * 60_000)).toBe('0:42')
     expect(formatClockShort(0)).toBe('0:00')
+  })
+})
+
+describe('formatLong (exact, like core explain lines)', () => {
+  afterEach(() => setLang('en'))
+  it('every non-zero unit: 1m35s / 1h02m03s; turkish spaced: 1dk 35sn', () => {
+    expect(formatLong(95_000)).toBe('1m35s')
+    expect(formatLong(3_723_000)).toBe('1h2m3s')
+    expect(formatLong(12_000)).toBe('12s')
+    setLang('tr')
+    expect(formatLong(95_000)).toBe('1dk 35sn')
+    expect(formatLong(3_723_000)).toBe('1sa 2dk 3sn')
   })
 })
 

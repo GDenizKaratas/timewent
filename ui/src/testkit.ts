@@ -36,6 +36,7 @@ export function view(p: Partial<View> = {}): View {
     one_liner: '',
     categories: [],
     listening: [],
+    not_shown: [],
     ...p,
   }
 }

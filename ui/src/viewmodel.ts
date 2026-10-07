@@ -1,7 +1,7 @@
 // Pure View/Status → display models. No DOM here.
 import { asciiBar, formatShare } from './bar'
 import { lang, t } from './i18n'
-import { clockRange, clockTime, formatClockShort, formatCompact, formatDuration } from './format'
+import { clockRange, clockTime, formatClockShort, formatCompact, formatDuration, formatLong } from './format'
 import { segmentTone, type Tone } from './tape'
 import type { Category, Layout, Presence, Range, Row, RowKind, SessionMeta, Status, View } from './types'
 
@@ -80,7 +80,7 @@ export type HowLine = {
   title?: string // tooltip with the full meaning
 }
 
-/** Under `▸ details` (§17): away · ♪ (≤ 2). Lines with nothing to say are omitted. Kinds of time
+/** Under `▸ details` (DESIGN §11.2): away · ♪ (≤ 2). Lines with nothing to say are omitted. Kinds of time
  *  live in the in-use tooltip; focus is in the summary sentence. */
 export function howLines(v: View): HowLine[] {
   const out: HowLine[] = []
@@ -148,7 +148,7 @@ export type PillModel = {
   title: string // line 1: what you're on now (never the brand while tracking)
   time: string | null // line 1, right
   timeTitle: string | null // says what that time is
-  badge: string | null // dim "auto" right before the time (§11.2)
+  badge: string | null // dim "auto" right before the time (DESIGN §11.7)
   lead: PillLead | null // line 2, left, ellipsizes first; never repeats line 1
   total: { label: string; value: string; title: string } | null // line 2, right: never cut
 }
@@ -175,7 +175,7 @@ export function pillModel(
 ): PillModel {
   if (!st.tracking) {
     const hint = (text: string): PillLead => ({ text, kind: 'hint' })
-    // §15: not tracking → the brand (a proper noun, never translated) on line 1
+    // DESIGN §11.1: not tracking → the brand (a proper noun, never translated) on line 1
     const today = extra.todayInUseMs ?? 0
     const line2 = extra.ended
       ? `${t('ended_in_use')} ${formatDuration(extra.ended.in_use_ms)}`
@@ -200,7 +200,7 @@ export function pillModel(
       total,
     }
   }
-  // §11.1 / §13.1: a project or activity names the line; the app/site moves to line 2
+  // DESIGN §11.1: a project or activity names the line; the app/site moves to line 2
   const title = c.project ?? c.label
   const second = (c.project ? distinctDetail(title, c.label) : null) ?? distinctDetail(title, c.detail)
   return {
@@ -233,11 +233,11 @@ export const fromLayout = (layout: Layout): 'collapsed' | 'expanded' => (layout 
 export const expandButton = (expanded: boolean): { text: string; title: string } =>
   expanded ? { text: '▴', title: t('collapse_title') } : { text: '▾', title: t('expand_title') }
 
-/** One part of a summary line (§20): `label` dim; `name` bright and the only part that shrinks
+/** One part of a summary line (DESIGN §11.2): `label` dim; `name` bright and the only part that shrinks
  *  (ellipsis); `value` bright, nowrap, compact. Parts are joined by a dim ` · `. */
 export type LinePart = { label?: string; name?: string; value?: string }
 
-/** §17: the one line under the rows — `Most: <top row> · longest focus 21m`. */
+/** DESIGN §11.2: the one line under the rows — `Most: <top row> · longest focus 21m`. */
 export function summarySentence(v: View): { parts: LinePart[]; title: string } | null {
   const parts: LinePart[] = []
   const top = v.rows.find((r) => !isPassthrough(r.key))
@@ -246,7 +246,7 @@ export function summarySentence(v: View): { parts: LinePart[]; title: string } |
   return parts.length ? { parts, title: t('switches', { n: v.switches }) } : null
 }
 
-/** §16.1 receipt line 2: top row · away. In-use is in the heading and focus in the how block,
+/** DESIGN §11.4 receipt line 2: top row · away. In-use is in the heading and focus in the how block,
  *  right below — so the receipt stays exactly two lines at 340px. */
 export function receiptParts(v: View): LinePart[] {
   const parts: LinePart[] = []
@@ -258,7 +258,7 @@ export function receiptParts(v: View): LinePart[] {
 
 const DETAILS_CAP = 5
 
-/** §16.3: an open row shows 5 details, then `+n more` (inline toggle) — same rule as the rows. */
+/** DESIGN §11.2: an open row shows 5 details, then `+n more` (inline toggle) — same rule as the rows. */
 export function capDetails(d: DetailLine[], showAll: boolean): { shown: DetailLine[]; toggle: string | null } {
   if (d.length <= DETAILS_CAP) return { shown: d, toggle: null }
   return showAll ? { shown: d, toggle: t('show_less') } : { shown: d.slice(0, DETAILS_CAP), toggle: t('more_n', { n: d.length - DETAILS_CAP }) }
@@ -288,7 +288,7 @@ export function rangeTabs(effective: Range, hasSession: boolean, noneSelected = 
     id,
     text: t(TAB_KEYS[id][0]),
     title: t(TAB_KEYS[id][1]),
-    selected: !noneSelected && effective.kind === id, // §19: a past session selects no tab
+    selected: !noneSelected && effective.kind === id, // DESIGN §11.5: a past session selects no tab
     disabled: id === 'session' && !hasSession,
   }))
 }
@@ -303,9 +303,11 @@ export function inUseTitle(v: View): string {
   const a = formatDuration(v.active_ms)
   const r = formatDuration(v.passive_ms)
   const head = v.away_ms > 0 ? t('in_use_title_away', { a, r, w: formatDuration(v.away_ms) }) : t('in_use_title', { a, r })
-  // every kind of time with its share (§14.1) — on its own line, the panel doesn't show them
+  // every kind of time with its share (DESIGN §8.3) — on its own line, the panel doesn't show them
   const kinds = v.categories.map((c) => `${t(CATEGORY_KEY[c.category])} ${formatShare(c.share)}`).join(' · ')
-  return kinds ? `${head}\n${kinds}` : head
+  // DESIGN §8.5: in use, but credited to no row — say so, or the visible shares look short
+  const hidden = v.not_shown.map((n) => `${n.label} ${formatLong(n.ms)}`).join(' · ')
+  return [head, kinds, hidden ? t('not_shown', { x: hidden }) : ''].filter(Boolean).join('\n')
 }
 
 /** Never started, or nothing in range while idle → show the `$ see where your time went` prompt. */

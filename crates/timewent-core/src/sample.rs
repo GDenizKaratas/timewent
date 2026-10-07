@@ -17,10 +17,10 @@ pub struct Sample {
     pub locked: bool,
     /// Some process holds a `PreventUserIdleDisplaySleep` power assertion (video playback, a
     /// call). Absent in older recordings (= false) and omitted when false, so those stay
-    /// byte-identical (PLAN §10.1).
+    /// byte-identical (DESIGN §4).
     #[serde(default, skip_serializing_if = "is_false")]
     pub media_active: bool,
-    /// What is playing sound right now, if anything (§14.2). Absent in older recordings.
+    /// What is playing sound right now, if anything (DESIGN §3.1). Absent in older recordings.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub audio: Option<Audio>,
 }

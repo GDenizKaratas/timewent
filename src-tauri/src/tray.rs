@@ -45,7 +45,7 @@ pub fn build(app: &AppHandle) -> tauri::Result<()> {
         ],
     )?;
 
-    // Left click peeks (PLAN §10.4); right click opens the menu.
+    // Left click peeks (DESIGN §11.3); right click opens the menu.
     TrayIconBuilder::with_id(TRAY_ID)
         .icon(icon(false))
         .icon_as_template(true)

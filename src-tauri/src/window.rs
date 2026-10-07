@@ -241,7 +241,7 @@ fn keyboard_owner() -> (bool, Option<i32>) {
     (false, None)
 }
 
-/// Resizes the window keeping its top-left corner (PLAN "Esc & position fix"), in one
+/// Resizes the window keeping its top-left corner (DESIGN §11.3), in one
 /// `setFrame:display:` on the main thread so there is no intermediate frame.
 #[cfg(target_os = "macos")]
 pub fn resize_keep_top(app: &AppHandle, width: f64, height: f64) -> tauri::Result<()> {

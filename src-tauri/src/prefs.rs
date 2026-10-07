@@ -15,15 +15,15 @@ use crate::shortcut::{parse_peek, DEFAULT_PEEK};
 pub struct Prefs {
     /// Keep the pill above other windows.
     pub always_on_top: bool,
-    /// Global shortcut that peeks (PLAN §10.4), Tauri accelerator format.
+    /// Global shortcut that peeks (DESIGN §11.3), Tauri accelerator format.
     pub peek_shortcut: String,
-    /// Track whenever the app runs; split sessions at long away stretches (§11.2).
+    /// Track whenever the app runs; split sessions at long away stretches (DESIGN §11.7).
     pub auto_track: bool,
     /// Away this long (seconds) ends an auto session. At least [`MIN_SPLIT_S`].
     pub auto_split_after_s: u32,
-    /// `system` follows macOS's preferred languages (§13.3).
+    /// `system` follows macOS's preferred languages (DESIGN §11.9).
     pub language: LanguagePref,
-    /// Start with the Mac, hidden as the pill (§22).
+    /// Start with the Mac, hidden as the pill (DESIGN §11.8).
     pub launch_at_login: bool,
 }
 

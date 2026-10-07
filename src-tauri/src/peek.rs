@@ -1,4 +1,4 @@
-//! Peek (PLAN §10.4): one key shows the panel wherever you are, the same key puts everything
+//! Peek (DESIGN §11.3): one key shows the panel wherever you are, the same key puts everything
 //! back exactly as it was — including which app had the keyboard. Pure: facts in, actions
 //! out; `window.rs` gathers the facts and performs the actions.
 
@@ -91,7 +91,7 @@ fn end(mode: Layout, facts: &Facts) -> Vec<Action> {
     ]
 }
 
-/// One transition (PLAN §10.4 + "Esc & position fix"):
+/// One transition (DESIGN §11.3 + "Esc & position fix"):
 /// - peek key / tray click: full toggle — open expanded, or back to the exact pre-peek state
 ///   (hidden again if it was hidden) and the keyboard back to the previous app;
 /// - esc while peeking: one step down — the pill, still focused; the peek is over;

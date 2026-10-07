@@ -1,6 +1,6 @@
 // Controller: state, polling, actions, keyboard. Rendering lives in render/*.
 //
-// Layout (§10.2, unified card rule): one fixed-width window holding ONE card. Collapsed it is
+// Layout (DESIGN §11.2, unified card rule): one fixed-width window holding ONE card. Collapsed it is
 // just the pill; expanding grows the same card downward (divider, then the panel). In the panel, rows
 // and tape are fixed; only recent activity scrolls (its own ~5-row box); the footer is fixed.
 import { api } from './api'
@@ -69,9 +69,9 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     status: null as Status | null,
     sessions: [] as SessionMeta[],
     choice: null as RangeChoice, // the user's tab pick (wins until relaunch); null = default
-    receipt: null as Receipt, // §16.1: shown after stop until esc / collapse / start
+    receipt: null as Receipt, // DESIGN §11.4: shown after stop until esc / collapse / start
     allDetails: new Set<string>(), // rows showing every detail (past the cap of 5)
-    past: null as Past, // §19: a past session opened from history
+    past: null as Past, // DESIGN §11.5: a past session opened from history
     view: null as View | null,
     viewSig: '',
     openRows: new Set<string>(),
@@ -106,7 +106,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     h('div', null, h('span', { class: 'prompt' }, '$ '), T('tagline')),
     h('div', { class: 'dim' }, T('press_space')),
   )
-  // §17 one answer by default: rows + one dim sentence; everything else under `▸ details`.
+  // DESIGN §11.2 one answer by default: rows + one dim sentence; everything else under `▸ details`.
   const whereEl = h('div')
   const sentenceEl = h('div', { class: 'sentence' })
   const detailsBtn = h('button', { class: 'disclosure', attrs: { type: 'button' } })
@@ -166,7 +166,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     receiptCopy.title = t('copy_title')
   })
   const receiptEl = h('div', { class: 'receipt' }, receiptLine, receiptCopy, receiptParts2)
-  // §19: viewing a past session from history — `07.10 · 00:36–00:57   [← history]`
+  // DESIGN §11.5: viewing a past session from history — `07.10 · 00:36–00:57   [← history]`
   const pastLabel = h('span', { class: 'past-label' })
   const pastBack = tbtn(t('back_history'), { title: t('back_title'), onclick: () => backToHistory() })
   onLangChange(() => (pastBack.textContent = t('back_history')))
@@ -238,7 +238,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
 
   // ── data ────────────────────────────────────────────────────
   function effectiveRange(): Range {
-    return resolveRange(state.choice, state.status, state.sessions) // §16.4: today in auto mode
+    return resolveRange(state.choice, state.status, state.sessions) // DESIGN §11.2: today in auto mode
   }
 
   function chooseTab(id: TabId) {
@@ -256,7 +256,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     tabs.update(rangeTabs(effectiveRange(), state.sessions.length > 0, !!state.past))
   }
 
-  // §19 past session: the row in history opens its report; esc / [← history] goes back there.
+  // DESIGN §11.5 past session: the row in history opens its report; esc / [← history] goes back there.
   let pastPrevChoice: RangeChoice = null
   function openPastSession(o: SessionOverview) {
     if (!state.past) pastPrevChoice = state.choice
@@ -378,7 +378,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     }
   }
 
-  // §16.1 stop = receipt: expand on the session that just ended, one bright line on top.
+  // DESIGN §11.4 stop = receipt: expand on the session that just ended, one bright line on top.
   function showReceipt(sessionId: number) {
     const prevChoice = state.receipt ? state.receipt.prevChoice : state.choice
     state.receipt = nextReceipt(state.receipt, { type: 'stopped', sessionId, choice: prevChoice })
@@ -575,11 +575,11 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     else void openSettings()
   }
 
-  // Copy = JSON (PLAN): every [copy] puts the export of what's on screen on the clipboard.
+  // Copy = JSON (DESIGN §11.2): every [copy] puts the export of what's on screen on the clipboard.
   async function copyJson() {
     try {
       const range = copyTarget({ past: state.past, receipt: state.receipt, effective: effectiveRange() })
-            // Native pasteboard (§23.1): WKWebView refuses web clipboard writes after an await.
+            // Native pasteboard (DESIGN §11.10): WKWebView refuses web clipboard writes after an await.
       try {
         await api.copy_json(range)
         footer.flash(t('copied'), 2000)
@@ -638,7 +638,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
       { key: e.key, meta: e.metaKey, ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey, target },
       { mode: state.mode, pane: state.pane, peeking: state.peeking },
     )
-    // §19: while viewing a past session, esc returns to history (before the usual step-down)
+    // DESIGN §11.5: while viewing a past session, esc returns to history (before the usual step-down)
     if (action === 'collapse' && e.key === 'Escape' && state.past && state.pane === 'main') {
       e.preventDefault()
       backToHistory()
@@ -671,7 +671,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     if (e.detail > 0 && (e.target as Element).closest('button')) (document.activeElement as HTMLElement | null)?.blur()
   })
 
-  // ── peek (§10.4) ───────────────────────────────────────────
+  // ── peek (DESIGN §11.3) ───────────────────────────────────────────
   // The backend owns the window: it shows/hides it and remembers the layout. The UI follows:
   // expanded while peeking; on close, whatever layout the event says to return to.
   void onPeek(({ open, mode }) => {
@@ -679,7 +679,7 @@ export function startApp(root: HTMLElement, initial: { mode?: Mode; settings?: b
     void setMode(open ? 'expanded' : fromLayout(mode), 'backend')
   })
 
-  // ── language (§13.3) ───────────────────────────────────────
+  // ── language (DESIGN §11.9) ───────────────────────────────────────
   // Static chrome relabels itself (T nodes); dynamic parts are re-rendered here. The backend
   // also switches explain lines / the one-liner, so the view is fetched again.
   function applyLanguage(pref: Prefs['language']) {

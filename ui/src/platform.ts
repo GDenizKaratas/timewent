@@ -31,7 +31,7 @@ export async function startWindowDrag(): Promise<void> {
   await getCurrentWindow().startDragging()
 }
 
-/** Backend `peek` event (§10.4): the global key / tray click opened or closed a peek. */
+/** Backend `peek` event (DESIGN §11.3): the global key / tray click opened or closed a peek. */
 export async function onPeek(cb: (e: PeekEvent) => void): Promise<() => void> {
   if (!isTauri()) return () => {}
   const { listen } = await import('@tauri-apps/api/event')

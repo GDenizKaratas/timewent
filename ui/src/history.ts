@@ -1,4 +1,4 @@
-// §19 history tab + the past-session context strip. Pure.
+// DESIGN §11.5 history tab + the past-session context strip. Pure.
 import { clockTime, formatCompact } from './format'
 import { t } from './i18n'
 import type { SessionOverview } from './types'

@@ -747,7 +747,7 @@ kbd {
   mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
 }
 
-/* §15 groups: what | how | when — hairline only between groups */
+/* DESIGN §11.2 groups: what | how | when — hairline only between groups */
 hr.group { margin: 10px calc(-1 * var(--pad)); }
 
 /* how: key/value, dim key column, normal-weight value, one line each */
@@ -761,7 +761,7 @@ hr.group { margin: 10px calc(-1 * var(--pad)); }
 .kv-value {
   display: flex;
   min-width: 0;
-  color: var(--fg); /* §20: values bright, keys dim */
+  color: var(--fg); /* DESIGN §11.2: values bright, keys dim */
 }
 .kv-main {
   min-width: 0;
@@ -776,7 +776,7 @@ hr.group { margin: 10px calc(-1 * var(--pad)); }
 }
 .kv-away .kv-value { color: var(--away); opacity: 0.85; }
 
-/* §16.1 receipt: one bright line on top after stop, with [copy] */
+/* DESIGN §11.4 receipt: one bright line on top after stop, with [copy] */
 .receipt {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -789,13 +789,13 @@ hr.group { margin: 10px calc(-1 * var(--pad)); }
   min-width: 0;
 }
 .receipt-parts { grid-column: 1 / -1; }
-/* §16.3 details: +n more under the open row */
+/* DESIGN §11.2 details: +n more under the open row */
 .sub-more { padding: 2px 0 2px 2ch; }
-/* §16.4 weight: the heading and the in-use number only */
+/* DESIGN §11.2 weight: the heading and the in-use number only */
 .pane-main .sec-head:first-child > span:first-child,
 .in-use { font-weight: 600; }
 
-/* §17: one dim sentence under the rows, then the details disclosure */
+/* DESIGN §11.2: one dim sentence under the rows, then the details disclosure */
 .sentence { margin-top: 6px; }
 .disclosure {
   font: inherit;
@@ -812,7 +812,7 @@ hr.group { margin: 10px calc(-1 * var(--pad)); }
 .disclosure:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
 .details { margin-top: 6px; }
 
-/* §19 settings: dotless tab bar (5 tabs fit 340px), purpose line, advanced, history */
+/* DESIGN §11.6 settings: dotless tab bar (5 tabs fit 340px), purpose line, advanced, history */
 .set-tabs { gap: 8px; } /* 5 tabs: EN 312px, TR 306px of 314 */
 .comment.purpose { margin: 2px 0 8px; }
 .adv-head { margin-top: 8px; }
@@ -858,7 +858,7 @@ hr.group { margin: 10px calc(-1 * var(--pad)); }
   color: var(--fg);
 }
 
-/* §20 one line, always: label dim · name bright (shrinks, ellipsis) · value bright (nowrap) */
+/* DESIGN §11.2 one line, always: label dim · name bright (shrinks, ellipsis) · value bright (nowrap) */
 .line {
   display: flex;
   align-items: baseline;

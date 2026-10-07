@@ -1,4 +1,4 @@
-//! The two languages core renders text in (PLAN §13.3). Data — app names, titles, projects,
+//! The two languages core renders text in (DESIGN §9). Data — app names, titles, projects,
 //! activity names — is never translated.
 
 use serde::{Deserialize, Serialize};

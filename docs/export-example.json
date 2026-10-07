@@ -18,54 +18,8 @@
     "switches": 2
   },
   "where": [
-    {
-      "name": "bank-agent-lab",
-      "kind": "project",
-      "category": "code",
-      "seconds": 870,
-      "share": 0.98,
-      "breakdown": {
-        "code": 600,
-        "ai": 120,
-        "docs": 90,
-        "web": 60
-      },
-      "top_details": [
-        {
-          "name": "risk_engine.py",
-          "seconds": 420
-        },
-        {
-          "name": "models.py",
-          "seconds": 180
-        },
-        {
-          "name": "Rust lifetimes explained",
-          "seconds": 120
-        },
-        {
-          "name": "docs.rs",
-          "seconds": 90
-        },
-        {
-          "name": "Add risk limits · Pull Request #12 · acme/bank-agent-lab",
-          "seconds": 60
-        }
-      ]
-    },
-    {
-      "name": "YouTube",
-      "kind": "site",
-      "category": "media",
-      "seconds": 15,
-      "share": 0.02,
-      "top_details": [
-        {
-          "name": "cat video - YouTube",
-          "seconds": 15
-        }
-      ]
-    }
+    {"name": "bank-agent-lab", "kind": "project", "category": "code", "seconds": 870, "share": 0.98, "breakdown": {"code": 600, "ai": 120, "docs": 90, "web": 60}, "top_details": [{"name": "risk_engine.py", "seconds": 420}, {"name": "models.py", "seconds": 180}, {"name": "Rust lifetimes explained", "seconds": 120}]},
+    {"name": "YouTube", "kind": "site", "category": "media", "seconds": 15, "share": 0.02, "top_details": [{"name": "cat video - YouTube", "seconds": 15}]}
   ],
   "other_s": 0,
   "listening": [],
@@ -75,73 +29,15 @@
       "to": "11:14:45",
       "in_use_s": 885,
       "blocks": [
-        {
-          "from": "11:00:00",
-          "to": "11:05:00",
-          "name": "bank-agent-lab",
-          "detail": "risk_engine.py",
-          "kind": "focus",
-          "seconds": 300
-        },
-        {
-          "from": "11:05:00",
-          "to": "11:07:00",
-          "name": "ChatGPT",
-          "detail": "Rust lifetimes explained",
-          "kind": "focus",
-          "seconds": 120,
-          "why": [
-            "ChatGPT counted as research for bank-agent-lab (between two bank-agent-lab blocks, 3m30s apart)"
-          ]
-        },
-        {
-          "from": "11:07:00",
-          "to": "11:08:30",
-          "name": "docs",
-          "detail": "docs.rs",
-          "kind": "focus",
-          "seconds": 90,
-          "why": [
-            "docs counted as research for bank-agent-lab (between two bank-agent-lab blocks, 3m30s apart)"
-          ]
-        },
-        {
-          "from": "11:08:30",
-          "to": "11:09:30",
-          "name": "GitHub",
-          "detail": "Add risk limits · Pull Request #12 · acme/bank-agent-lab",
-          "kind": "focus",
-          "seconds": 60,
-          "why": [
-            "github.com/acme/bank-agent-lab matched project bank-agent-lab"
-          ]
-        },
-        {
-          "from": "11:09:30",
-          "to": "11:14:45",
-          "name": "bank-agent-lab",
-          "detail": "models.py",
-          "kind": "focus",
-          "seconds": 300
-        }
+        {"from": "11:00:00", "to": "11:05:00", "name": "bank-agent-lab", "detail": "risk_engine.py", "kind": "focus", "seconds": 300},
+        {"from": "11:05:00", "to": "11:07:00", "name": "ChatGPT", "detail": "Rust lifetimes explained", "kind": "focus", "seconds": 120, "why": ["ChatGPT counted as research for bank-agent-lab (between two bank-agent-lab blocks, 3m30s apart)"]},
+        {"from": "11:07:00", "to": "11:08:30", "name": "docs", "detail": "docs.rs", "kind": "focus", "seconds": 90, "why": ["docs counted as research for bank-agent-lab (between two bank-agent-lab blocks, 3m30s apart)"]},
+        {"from": "11:08:30", "to": "11:09:30", "name": "GitHub", "detail": "Add risk limits · Pull Request #12 · acme/bank-agent-lab", "kind": "focus", "seconds": 60, "why": ["github.com/acme/bank-agent-lab matched project bank-agent-lab"]},
+        {"from": "11:09:30", "to": "11:14:45", "name": "bank-agent-lab", "detail": "models.py", "kind": "focus", "seconds": 300}
       ],
-      "short_visits": {
-        "count": 1,
-        "seconds": 15,
-        "top": [
-          {
-            "name": "YouTube",
-            "seconds": 15
-          }
-        ]
-      }
+      "short_visits": {"count": 1, "seconds": 15, "top": [{"name": "YouTube", "seconds": 15}]}
     }
   ],
-  "rules": {
-    "passive_after_s": 45,
-    "away_after_s": 180,
-    "transient_max_s": 3,
-    "glance_max_s": 10
-  },
+  "rules": {"passive_after_s": 45, "away_after_s": 180, "transient_max_s": 3, "glance_max_s": 10},
   "generated": "2026-10-06T11:15:45+03:00"
 }

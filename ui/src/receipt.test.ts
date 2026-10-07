@@ -8,7 +8,7 @@ const st = (p: Partial<Status> = {}): Status => ({
 })
 const sessions: SessionMeta[] = [{ id: 9, started_at_ms: 2, ended_at_ms: 3 }, { id: 8, started_at_ms: 1, ended_at_ms: 2 }]
 
-describe('receipt (§16.1: stop = receipt)', () => {
+describe('receipt (DESIGN §11.4: stop = receipt)', () => {
   const week: RangeChoice = { kind: 'week' }
   it('stop shows the receipt for the session that just ended, remembering the range choice', () => {
     expect(nextReceipt(null, { type: 'stopped', sessionId: 9, choice: week })).toEqual({ sessionId: 9, prevChoice: week })
@@ -26,7 +26,7 @@ describe('receipt (§16.1: stop = receipt)', () => {
   })
 })
 
-describe('resolveRange (§16.4 default range)', () => {
+describe('resolveRange (DESIGN §11.2 default range)', () => {
   it('no explicit choice: session, or today when auto mode is on', () => {
     expect(resolveRange(null, st({ tracking: true, session_id: 9 }), sessions)).toEqual({ kind: 'session', id: 9 })
     expect(resolveRange(null, st({ tracking: true, session_id: 9, auto: true }), sessions)).toEqual({ kind: 'today' })

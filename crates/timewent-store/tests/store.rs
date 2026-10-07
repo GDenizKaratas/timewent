@@ -519,7 +519,7 @@ fn a_database_from_a_newer_version_is_refused() {
     ));
 }
 
-// ── deleting a session (PLAN §18) ──────────────────────────────
+// ── deleting a session (DESIGN §12) ──────────────────────────────
 
 fn closed_session(store: &mut Store, start: i64, samples: &[Sample]) -> i64 {
     let id = store.start_session(start).expect("start");

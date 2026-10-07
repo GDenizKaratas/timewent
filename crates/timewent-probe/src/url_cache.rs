@@ -1,4 +1,4 @@
-//! When to ask a browser for its url (PLAN §5). Pure: the clock and the query are injected.
+//! When to ask a browser for its url (DESIGN §3.2). Pure: the clock and the query are injected.
 //!
 //! Asking costs an `osascript` process (~tens of ms), so it happens only when the
 //! (bundle id, window title) pair differs from the last answered one. A failed ask backs that

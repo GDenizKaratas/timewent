@@ -1,5 +1,5 @@
-// The tape: a strip of LED cells, compact, in the same row as `▸ details` (PLAN "Tape beside
-// details"). Each cell links to the segment it shows. Cell height mirrors ▇ active, ▅ passive, ▃ glance.
+// The tape: a strip of LED cells, compact, in the same row as `▸ details` (DESIGN §11.2).
+// Each cell links to the segment it shows. Cell height mirrors ▇ active, ▅ passive, ▃ glance.
 import { h } from '../dom'
 import { clockRange, clockTime } from '../format'
 import { t } from '../i18n'

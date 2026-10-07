@@ -1,5 +1,5 @@
 // Duration and clock formatting. All durations are ms in, floored to whole seconds.
-import { t } from './i18n'
+import { lang, t } from './i18n'
 
 const pad2 = (n: number) => String(n).padStart(2, '0')
 
@@ -26,6 +26,14 @@ export function formatCompact(ms: number): string {
   if (h > 0) return `${h}${t('unit_h')}${pad2(m)}${t('unit_m')}`
   if (m > 0) return `${m}${t('unit_m')}`
   return `${s}${t('unit_s')}`
+}
+
+/** Exact long form, every non-zero unit — matches core's explain lines: `1m35s`, TR `1dk 35sn`. */
+export function formatLong(ms: number): string {
+  const [h, m, s] = hms(ms)
+  const parts = [[h, 'unit_h'], [m, 'unit_m'], [s, 'unit_s']] as const
+  const out = parts.filter(([n]) => n > 0).map(([n, u]) => `${n}${t(u)}`)
+  return out.length ? out.join(lang() === 'tr' ? ' ' : '') : `0${t('unit_s')}`
 }
 
 /** Local wall-clock `HH:MM`. */

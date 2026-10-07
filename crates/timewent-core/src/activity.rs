@@ -1,4 +1,4 @@
-//! User-defined activities (PLAN §13.1): a name you give to a set of apps and sites. Matched
+//! User-defined activities (DESIGN §7.3): a name you give to a set of apps and sites. Matched
 //! per sample, before project attribution; members are never attributed to a project.
 
 use crate::config::{Activity, Config};

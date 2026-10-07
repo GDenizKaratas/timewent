@@ -7,7 +7,7 @@ use crate::error::{Error, Result};
 
 const MIGRATIONS: &[&str] = &[V1, V2, V3];
 
-/// v1 — PLAN §4, with two deliberate additions:
+/// v1 — DESIGN §12, with two deliberate additions:
 /// - `contexts` dedup uses an expression index instead of `UNIQUE(...)`, because SQLite
 ///   treats NULLs as distinct in UNIQUE constraints, so title-less or url-less contexts would
 ///   never dedup. NULL maps to integer 0, which never equals a TEXT value (not even '0').
@@ -46,13 +46,13 @@ CREATE TABLE samples (
 CREATE INDEX samples_ts ON samples (ts_ms);
 ";
 
-/// v2 — PLAN §10.1: whether media/a call held the display awake at that sample. Existing
+/// v2 — DESIGN §12: whether media/a call held the display awake at that sample. Existing
 /// rows predate the signal and read as false, exactly like old JSONL fixtures.
 const V2: &str = "
 ALTER TABLE samples ADD COLUMN media_active INTEGER NOT NULL DEFAULT 0;
 ";
 
-/// v3 — PLAN §14.2: what held audio output at each sample, deduplicated like contexts
+/// v3 — DESIGN §12: what held audio output at each sample, deduplicated like contexts
 /// (NULL-safe identity index). Existing rows have no audio.
 const V3: &str = "
 CREATE TABLE audio (

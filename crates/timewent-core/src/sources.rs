@@ -1,4 +1,4 @@
-//! "Apps and sites you used" (PLAN §13.1, decision A6): what the activity editor offers as
+//! "Apps and sites you used" (DESIGN §7.3, decision A6): what the activity editor offers as
 //! members, so nobody types bundle ids. Pure: per-context sample counts in, sorted lists out.
 
 use std::collections::BTreeMap;

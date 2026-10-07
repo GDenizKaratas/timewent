@@ -29,19 +29,19 @@ pub struct Config {
     /// Hosts grouped under the `docs` label (in addition to `docs.*` and `*.readthedocs.io`).
     pub docs_domains: Vec<String>,
     /// Apps you pass through on the way to work — launchers, system UI. Their runs are never
-    /// a context: always absorbed into a neighbour (PLAN §10.1).
+    /// a context: always absorbed into a neighbour (DESIGN §5.5).
     pub passthrough_bundle_ids: Vec<String>,
     /// Count time spent looking at timewent itself as an ordinary app context. Off: timewent
-    /// is passthrough, whatever `passthrough_bundle_ids` says (PLAN §10, self-visibility).
+    /// is passthrough, whatever `passthrough_bundle_ids` says (DESIGN §5.5, self-visibility).
     pub count_self: bool,
-    /// Roll AI / docs / repo / matching-title time up into the project it served (§11.1).
+    /// Roll AI / docs / repo / matching-title time up into the project it served (DESIGN §7.1).
     /// Off: every context is its own row, as before.
     pub attribute_projects: bool,
     /// Max time between two blocks of one project for what lies between to count as support.
     pub support_window_s: u32,
-    /// Names you give to sets of apps / sites (§13.1). First match in list order wins.
+    /// Names you give to sets of apps / sites (DESIGN §7.3). First match in list order wins.
     pub activities: Vec<Activity>,
-    /// What kind of time an app is (§14.1), by bundle id. Editors are always code and
+    /// What kind of time an app is (DESIGN §5.4), by bundle id. Editors are always code and
     /// browsers follow `labels`; any other app not listed is `app`.
     pub app_categories: BTreeMap<String, Category>,
 }
@@ -79,7 +79,7 @@ impl Default for Config {
             ("github.com", "GitHub", Category::Web),
             ("google.com", "Google", Category::Web),
             ("localhost", "localhost", Category::Code),
-            // §14.1: what kind of time a site is.
+            // DESIGN §5.4: what kind of time a site is.
             ("youtube.com", "YouTube", Category::Media),
             ("music.youtube.com", "YouTube Music", Category::Media),
             ("netflix.com", "Netflix", Category::Media),
@@ -146,7 +146,7 @@ impl Default for Config {
     }
 }
 
-/// PLAN §14.1 defaults: bundle id → category for well-known apps.
+/// DESIGN §5.4 defaults: bundle id → category for well-known apps.
 const DEFAULT_APP_CATEGORIES: &[(&str, Category)] = &[
     ("com.apple.Terminal", Category::Code),
     ("com.googlecode.iterm2", Category::Code),
@@ -194,7 +194,7 @@ fn default_app_categories() -> BTreeMap<String, Category> {
         .collect()
 }
 
-/// PLAN §10.1 defaults: launchers and system UI that briefly take focus. (timewent itself is
+/// DESIGN §5.5 defaults: launchers and system UI that briefly take focus. (timewent itself is
 /// governed by `count_self`.)
 const DEFAULT_PASSTHROUGH: &[&str] = &[
     "com.apple.Spotlight",
@@ -208,11 +208,11 @@ const DEFAULT_PASSTHROUGH: &[&str] = &[
     "com.apple.UserNotificationCenter",
     "com.apple.systemuiserver",
     "com.apple.WindowManager",
-    // The Wi-Fi login sheet: a moment on the way online, never "time spent" (§23.2c).
+    // The Wi-Fi login sheet: a moment on the way online, never "time spent" (DESIGN §5.5).
     "com.apple.CaptiveNetworkAssistant",
 ];
 
-/// Below this the probe (and osascript url lookups) would dominate the machine (PLAN §1).
+/// Below this the probe (and osascript url lookups) would dominate the machine (DESIGN §1).
 const MIN_POLL_INTERVAL_MS: u32 = 250;
 
 impl Config {
@@ -338,7 +338,7 @@ mod tests {
             ("github.com", rule("GitHub", Category::Web)),
             ("google.com", rule("Google", Category::Web)),
             ("localhost", rule("localhost", Category::Code)),
-            // §14.1
+            // DESIGN §5.4
             ("youtube.com", rule("YouTube", Category::Media)),
             ("music.youtube.com", rule("YouTube Music", Category::Media)),
             ("netflix.com", rule("Netflix", Category::Media)),

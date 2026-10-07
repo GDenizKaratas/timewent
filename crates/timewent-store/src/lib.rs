@@ -1,4 +1,4 @@
-//! SQLite storage for raw samples (PLAN §4).
+//! SQLite storage for raw samples (DESIGN §12).
 //!
 //! Samples are append-only and round-trip exactly at millisecond idle precision
 //! (see [`idle_ms`]). Window/app/url strings are deduplicated into a `contexts` table so the

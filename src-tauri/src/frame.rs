@@ -1,4 +1,4 @@
-//! Window geometry (PLAN "Esc & position fix"): resizing keeps the window's top edge where it
+//! Window geometry (DESIGN §11.3): resizing keeps the window's top edge where it
 //! is. AppKit frames are bottom-left-origin (y grows upward), so a plain size change keeps the
 //! *bottom* edge — expanding grows the window upward, and shrinking a hidden window drops its
 //! top edge: every peek from hidden moved the pill down by (panel − pill) height. Pure math,

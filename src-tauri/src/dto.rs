@@ -1,4 +1,4 @@
-//! IPC shapes (PLAN §6) that are not already core types. Core `Range`, `Row`, `DetailTime`
+//! IPC shapes (DESIGN §11.10) that are not already core types. Core `Range`, `Row`, `DetailTime`
 //! and `SessionMeta` serialize to the contract verbatim, so they are reused as-is.
 
 use serde::Serialize;
@@ -12,11 +12,11 @@ pub struct Status {
     pub elapsed_ms: i64,
     pub current: Option<Current>,
     pub permissions: PermissionsDto,
-    /// Auto mode on and not paused (§11.2): the pill shows `auto` dimly.
+    /// Auto mode on and not paused (DESIGN §11.7): the pill shows `auto` dimly.
     pub auto: bool,
 }
 
-/// What you are on now: the pill (PLAN §6, §10.2).
+/// What you are on now: the pill (DESIGN §11.1, DESIGN §11.1).
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Current {
     /// Context key of the last real activity (never a passthrough app, never "away").
@@ -30,7 +30,7 @@ pub struct Current {
     pub context_ms: i64,
     /// Start of the current passive/away stretch; `None` while active.
     pub since_ms: Option<i64>,
-    /// The group row this belongs to — a project (§11.1) or an activity (§13.1) — if any.
+    /// The group row this belongs to — a project (DESIGN §7.1) or an activity (DESIGN §7.3) — if any.
     /// `key` / `context_ms` are then that row's; for an activity `label` is the member app.
     pub project: Option<String>,
 }
@@ -59,7 +59,7 @@ pub struct SegmentDto {
     pub details: Vec<DetailTime>,
     pub interruptions: Vec<InterruptionDto>,
     pub explain: Vec<String>,
-    /// Project this segment was attributed to (§11.1).
+    /// Project this segment was attributed to (DESIGN §7.1).
     pub project: Option<String>,
 }
 
@@ -70,23 +70,23 @@ pub struct View {
     pub active_ms: i64,
     pub passive_ms: i64,
     pub away_ms: i64,
-    /// Longest stretch on one row; number of row changes not split by away/gap (§11.3).
+    /// Longest stretch on one row; number of row changes not split by away/gap (DESIGN §8.2).
     pub longest_focus_ms: i64,
     pub switches: u32,
-    /// Copyable summary line (§11.4).
+    /// Copyable summary line (DESIGN §9).
     pub one_liner: String,
-    /// What kind of time (§14.1), ms desc.
+    /// What kind of time (DESIGN §8.3), ms desc.
     pub categories: Vec<timewent_core::CategoryShare>,
-    /// Background audio (§14.2), ms desc; never part of in-use.
+    /// Background audio (DESIGN §8.4), ms desc; never part of in-use.
     pub listening: Vec<timewent_core::Listening>,
-    /// In use but no row: pass-through apps credited to nothing (§21.1), ms desc.
+    /// In use but no row: pass-through apps credited to nothing (DESIGN §8.5), ms desc.
     pub not_shown: Vec<timewent_core::NotShown>,
     pub rows: Vec<Row>,
     /// Chronological.
     pub segments: Vec<SegmentDto>,
 }
 
-/// One line of the past-sessions list (PLAN §18).
+/// One line of the past-sessions list (DESIGN §11.5).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SessionOverview {
     pub id: i64,

@@ -47,14 +47,14 @@ pub struct Engine {
     appended: SharedCounter,
     config_gen: AtomicU64,
     current: Mutex<Option<(CurrentKey, Option<Current>)>>,
-    /// The open session's samples, segmented incrementally (§11.5): each status costs the
+    /// The open session's samples, segmented incrementally (DESIGN §2.2): each status costs the
     /// new samples' derivation plus one segmentation pass, not a reload of the session.
     live: Mutex<Option<Live>>,
-    /// Closed sessions' `(in_use_ms, top_label)` by (session id, config hash) — §18.
+    /// Closed sessions' `(in_use_ms, top_label)` by (session id, config hash) — DESIGN §2.2.
     overviews: Mutex<HashMap<(i64, u64), OverviewNumbers>>,
     /// The session being recorded, if any (manual or auto).
     open: SharedOpen,
-    /// Auto mode (§11.2); `None` = manual.
+    /// Auto mode (DESIGN §11.7); `None` = manual.
     auto: SharedAuto,
     /// Manual stop while auto is on: auto waits for a manual start (or a toggle / relaunch).
     paused: AtomicBool,
@@ -295,7 +295,7 @@ impl Engine {
         Ok(f(&l.segmenter, &segments))
     }
 
-    /// Past sessions for review (PLAN §18), newest first. Closed sessions never change, so
+    /// Past sessions for review (DESIGN §11.5), newest first. Closed sessions never change, so
     /// their numbers are cached per (session, config hash); the open one is computed live.
     pub fn sessions_overview(&self, limit: u32, offset: u32) -> Result<Vec<SessionOverview>> {
         let metas = lock(&self.store).sessions_page(limit, offset)?;
@@ -362,7 +362,7 @@ impl Engine {
     }
 
     /// The export document as text — exactly what [`export`](Self::export) writes to a file:
-    /// pretty-printed `timewent.report.v2` (PLAN §21.2) plus a final newline. Used for both
+    /// `timewent.report.v3` (DESIGN §10), one item per line where it fits, final newline. Used for both
     /// "copy as json" and the file export, so the two can never differ.
     pub fn export_text(&self, range: Range, lang: Lang) -> Result<String> {
         let now = (self.clock.now_ms)();
@@ -385,22 +385,32 @@ impl Engine {
                 .bounds(other, now)
                 .map_or((now, now), |(from, _)| (from, now)),
         };
+        // The sessions the range covers, so the report can tell them one by one.
+        let sessions: Vec<SessionMeta> = self
+            .sessions(u32::MAX)?
+            .into_iter()
+            .filter(|m| match &range {
+                Range::Session { id } => m.id == *id,
+                _ => m.started_at_ms < span.1 && m.ended_at_ms.is_none_or(|e| e > span.0),
+            })
+            .collect();
         let timezone = (self.clock.timezone)();
         let offset_at = self.clock.offset_at;
         let report = timewent_core::report(&timewent_core::ReportInput {
             range: &range,
             span,
             samples: &samples,
+            sessions: &sessions,
             config: &config,
             lang,
             timezone: &timezone,
             offset_at: &offset_at,
             generated_at_ms: now,
         });
-        Ok(serde_json::to_string_pretty(&report)? + "\n")
+        Ok(timewent_core::json_text(&report)?)
     }
 
-    /// Apps and sites used in the last 30 days (§13.1), for picking activity members.
+    /// Apps and sites used in the last 30 days (DESIGN §7.3), for picking activity members.
     pub fn seen_sources(&self) -> Result<SeenSources> {
         const WINDOW_MS: i64 = 30 * 86_400_000;
         let from = (self.clock.now_ms)() - WINDOW_MS;
@@ -799,11 +809,11 @@ mod tests {
         assert_eq!(written, path);
         let v: serde_json::Value =
             serde_json::from_str(&fs::read_to_string(&path).expect("read")).expect("json");
-        assert_eq!(v["schema"], "timewent.report.v2");
+        assert_eq!(v["schema"], "timewent.report.v3");
         assert_eq!(v["range"]["kind"], "session");
         assert_eq!(v["range"]["timezone"], "Europe/Istanbul");
         assert!(v["totals"]["in_use_s"].as_i64().is_some_and(|s| s >= 1));
-        assert!(v["timeline"].is_array() && v.get("days").is_none());
+        assert!(v["sessions"].is_array() && v.get("days").is_none());
     }
 
     #[test]
@@ -836,7 +846,7 @@ mod tests {
             serde_json::from_str(&fs::read_to_string(&path).expect("read")).expect("json");
         assert_eq!(v["range"]["kind"], "week");
         assert_eq!(v["totals"]["in_use_s"], 2, "both sessions are this week");
-        assert!(v["days"].is_array() && v.get("timeline").is_none());
+        assert!(v["days"].is_array() && v.get("sessions").is_none());
         e.export(Range::Today, &path, Lang::En).expect("export");
         let v: serde_json::Value =
             serde_json::from_str(&fs::read_to_string(&path).expect("read")).expect("json");
@@ -1047,7 +1057,7 @@ mod tests {
         let text = e
             .export_text(Range::Session { id }, Lang::En)
             .expect("text");
-        assert!(text.starts_with("{\n  \"schema\": \"timewent.report.v2\""));
+        assert!(text.starts_with("{\n  \"schema\": \"timewent.report.v3\""));
         assert!(text.ends_with("}\n"));
     }
 

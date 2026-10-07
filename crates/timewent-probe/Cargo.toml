@@ -46,5 +46,5 @@ objc2-core-graphics = { version = "0.3", default-features = false, features = [
     "CGEventTypes",
     "CGSession",
 ] }
-# Power assertions: "is any process keeping the display awake" (video, calls) — PLAN §10.1.
+# Power assertions: "is any process keeping the display awake" (video, calls) — DESIGN §4.
 objc2-io-kit = { version = "0.3", default-features = false, features = ["std", "pwr_mgt"] }

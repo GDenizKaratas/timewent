@@ -1,4 +1,4 @@
-//! "Why?" for a segment, as terminal-comment style lines: `explain` (PLAN §3.7, §13.3).
+//! "Why?" for a segment, as terminal-comment style lines: `explain` (DESIGN §9, DESIGN §9).
 
 use crate::lang::Lang;
 use crate::segment::{Evidence, Segment};

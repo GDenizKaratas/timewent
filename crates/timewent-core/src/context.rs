@@ -1,4 +1,4 @@
-//! What the user was looking at, derived from one sample: `derive_context` (PLAN §3.3).
+//! What the user was looking at, derived from one sample: `derive_context` (DESIGN §5).
 
 use serde::{Deserialize, Serialize};
 
@@ -106,7 +106,7 @@ fn editor_context(app_name: &str, title: Option<&str>) -> Context {
     let tokens = title.map(editor_title_tokens).unwrap_or_default();
     let (label, detail) = match tokens.as_slice() {
         // No project in the title (none, or Accessibility off): the editor app itself — an
-        // app row of kind code, never a project (§11 decision #2, §23.2b).
+        // app row of kind code, never a project (DESIGN §5.1).
         [] => return app_context(app_name, None, Category::Code),
         [project] => (project.to_string(), None),
         [file, project, ..] => (project.to_string(), Some(file.to_string())),
@@ -371,7 +371,7 @@ mod tests {
 
     #[test]
     fn vscode_without_a_project_is_an_app_not_a_project() {
-        // §11 decision #2 / §23.2b: no parsed project → the editor app itself (kind code).
+        // DESIGN §5.1: no parsed project → the editor app itself (kind code).
         assert_eq!(vscode(None), ctx("app:Code", "Code", None, Category::Code));
         assert_eq!(
             vscode(Some("Visual Studio Code")),

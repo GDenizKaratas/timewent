@@ -1,4 +1,4 @@
-//! Where the time went, per context: `summarize` (PLAN §3.6).
+//! Where the time went, per context: `summarize` (DESIGN §8).
 
 use std::collections::BTreeMap;
 
@@ -18,21 +18,21 @@ pub struct Summary {
     /// Per key over focus + glance segments, sorted by `ms` desc then `key` asc. Hostless
     /// passthrough segments (`pass:` keys) count in the totals but never get a row.
     pub rows: Vec<Row>,
-    /// Longest stretch of adjacent segments rolling into one row (§11.3); absorbed
+    /// Longest stretch of adjacent segments rolling into one row (DESIGN §8.2); absorbed
     /// transients and pass-through segments don't break it, away / gap / another row do.
     #[serde(default)]
     pub longest_focus_ms: i64,
     /// Boundaries between such stretches that are not separated by away or gap.
     #[serde(default)]
     pub switches: u32,
-    /// What kind of time (§14.1): in-use time per segment category (activity members by
+    /// What kind of time (DESIGN §8.3): in-use time per segment category (activity members by
     /// their own), ms desc. Share = same denominator as rows. Pass-through time is left out.
     #[serde(default)]
     pub categories: Vec<CategoryShare>,
-    /// Background audio (§14.2), per source and title, ms desc. Not part of any total.
+    /// Background audio (DESIGN §8.4), per source and title, ms desc. Not part of any total.
     #[serde(default)]
     pub listening: Vec<Listening>,
-    /// In-use time that is no row: pass-through apps not credited to anything (§21.1),
+    /// In-use time that is no row: pass-through apps not credited to anything (DESIGN §8.5),
     /// per app, ms desc — "not shown: timewent 1m35s".
     #[serde(default)]
     pub not_shown: Vec<NotShown>,
@@ -77,12 +77,12 @@ pub struct Row {
     pub breakdown: Vec<BreakdownItem>,
 }
 
-/// A project (§11.1: its code plus everything attributed to it) or a plain context.
+/// A project (DESIGN §7.1: its code plus everything attributed to it) or a plain context.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum RowKind {
     Project,
-    /// A group you defined (§13.1).
+    /// A group you defined (DESIGN §7.3).
     Activity,
     #[default]
     Context,
@@ -167,7 +167,7 @@ pub fn summarize(segments: &[Segment]) -> Summary {
                 summary.active_ms += seg.active_ms;
                 summary.passive_ms += seg.passive_ms;
                 if seg.key.starts_with(PASSTHROUGH_KEY_PREFIX) {
-                    // In-use time, but never a place your time "went" (PLAN §10, §21.1).
+                    // In-use time, but never a place your time "went" (DESIGN §8.5).
                     *hidden.entry(seg.label.clone()).or_insert(0) += seg.ms();
                     summary.total_ms += seg.ms();
                     continue;
@@ -462,7 +462,7 @@ mod tests {
 
         #[test]
         fn passthrough_between_one_app_keeps_the_stretch_but_adds_no_time() {
-            // §21 clarification: PDFgear 30s + timewent 95s + PDFgear 40s → one 70s stretch.
+            // DESIGN §8.2: PDFgear 30s + timewent 95s + PDFgear 40s → one 70s stretch.
             let pdf = Sample {
                 bundle_id: "com.pdfgear.mac".into(),
                 app_name: "PDFgear".into(),

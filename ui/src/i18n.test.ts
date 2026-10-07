@@ -23,7 +23,7 @@ describe('dictionaries', () => {
   })
 })
 
-/** Case rule, final (PLAN): every UI label starts with a capital (tr locale: i → İ). Lowercase
+/** Case rule (DESIGN §11.9): every UI label starts with a capital (tr locale: i → İ). Lowercase
  *  only for: the brand `timewent`, `#` comments, units, key-cap names, data. */
 const LOWERCASE_OK = (k: string, v: string) =>
   /^(unit_|u_|cat_)/.test(k) || // units; category words are data (taxonomy values)
@@ -63,7 +63,7 @@ describe('case rule, final', () => {
   })
 })
 
-describe('settings purpose lines (§19): one line at 340px', () => {
+describe('settings purpose lines (DESIGN §11.6): one line at 340px', () => {
   it('every `#` purpose line is ≤ 42 chars in both languages', () => {
     for (const d of Object.values(DICTS)) {
       for (const k of ['pp_general', 'pp_tracking', 'pp_activities', 'pp_history', 'pp_keys'] as const) {

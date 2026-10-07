@@ -1,4 +1,4 @@
-//! The peek key (PLAN §10.4): parsing and the "is this a sane global shortcut" rule. The
+//! The peek key (DESIGN §11.3): parsing and the "is this a sane global shortcut" rule. The
 //! registration itself is in `state.rs`, which keeps the old key whenever the new one fails.
 
 use tauri_plugin_global_shortcut::{Modifiers, Shortcut};

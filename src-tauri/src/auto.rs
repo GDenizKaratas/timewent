@@ -1,4 +1,4 @@
-//! Auto mode decisions (PLAN §11.2), pure. Tracking runs whenever the app runs; a session
+//! Auto mode decisions (DESIGN §11.7), pure. Tracking runs whenever the app runs; a session
 //! ends at the start of a long away stretch or a sleep gap, and the next one starts on input.
 
 use timewent_core::{Config, Sample};
@@ -82,7 +82,7 @@ impl AutoTrack {
             return Decision::Keep;
         }
         self.lock_since = None;
-        // Media playing / a call is never away (PLAN §10.1).
+        // Media playing / a call is never away (DESIGN §4).
         let idle_ms = (s.idle.min_s() * 1000.0) as i64;
         if !s.media_active && idle_ms >= split_ms {
             *self = AutoTrack::default();

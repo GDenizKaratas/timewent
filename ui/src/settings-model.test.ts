@@ -55,7 +55,7 @@ describe('validateAutoSplit', () => {
   })
 })
 
-describe('display units (§19 fix: long durations in minutes)', () => {
+describe('display units (DESIGN §11.6 fix: long durations in minutes)', () => {
   it('auto split and research window: minutes on screen, seconds in storage', () => {
     expect(toDisplay('auto_split_after_s', 1800)).toBe(30)
     expect(toDisplay('support_window_s', 600)).toBe(10)
@@ -71,7 +71,7 @@ describe('display units (§19 fix: long durations in minutes)', () => {
   })
 })
 
-describe('threshold rows (§19: human labels, units in words, raw key only in the tooltip)', () => {
+describe('threshold rows (DESIGN §11.6: human labels, units in words, raw key only in the tooltip)', () => {
   afterEach(() => setLang('en'))
   const values = { ...ok, auto_split_after_s: 1800 }
 
@@ -123,7 +123,7 @@ describe('threshold rows (§19: human labels, units in words, raw key only in th
   })
 })
 
-describe('behaviour toggles (§22 open at login)', () => {
+describe('behaviour toggles (DESIGN §11.8 open at login)', () => {
   const prefs: Prefs = {
     always_on_top: true, peek_shortcut: 'Alt+Shift+Space', auto_track: false, auto_split_after_s: 1800, language: 'system',
     launch_at_login: true,

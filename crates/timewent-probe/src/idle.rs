@@ -1,7 +1,7 @@
 //! Input idleness from per-event-type "seconds since last event" readings.
 //!
 //! Only *time since* an event type is read (CGEventSource), never events themselves: no event
-//! tap, no Input Monitoring permission, structurally unable to see keys (PLAN §1.3).
+//! tap, no Input Monitoring permission, structurally unable to see keys (DESIGN §1).
 
 use timewent_core::Idle;
 
@@ -125,7 +125,7 @@ mod tests {
 
     #[test]
     fn spec_event_types_feed_the_spec_fields() {
-        // PLAN §5: keyDown, mouseMoved, leftMouseDown, scrollWheel.
+        // DESIGN §3.2: keyDown, mouseMoved, leftMouseDown, scrollWheel.
         for (code, kind) in [(10, Keyboard), (5, Mouse), (1, Click), (22, Scroll)] {
             assert!(IDLE_EVENT_TYPES.contains(&(code, kind)), "{code}");
         }

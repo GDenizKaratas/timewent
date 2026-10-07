@@ -1,4 +1,4 @@
-// IPC contract — mirrors docs/PLAN.md §6 verbatim. snake_case on purpose: these are the
+// IPC contract — mirrors docs/DESIGN §11.10 verbatim. snake_case on purpose: these are the
 // exact JSON shapes the Rust side serializes. Change the plan first, then this file.
 
 export type Category = 'code' | 'ai' | 'docs' | 'web' | 'media' | 'social' | 'comms' | 'design' | 'notes' | 'app'
@@ -12,7 +12,7 @@ export type Status = {
   current: {
     key: string // the row key after attribution (proj:… / act:… / context key) — lights the live row
     label: string
-    project: string | null // §11.1: when set and ≠ label, the pill shows it on line 1
+    project: string | null // DESIGN §11.1: when set and ≠ label, the pill shows it on line 1
     detail: string | null
     category: Category
     presence: Presence
@@ -20,7 +20,7 @@ export type Status = {
     since_ms: number | null // start of the current away/passive stretch
   } | null
   permissions: { accessibility: boolean }
-  auto: boolean // §11.2: this session was started by auto mode
+  auto: boolean // DESIGN §11.7: this session was started by auto mode
 }
 
 export type Range = { kind: 'session'; id: number } | { kind: 'today' } | { kind: 'week' } | { kind: 'all' } // week = local monday 00:00 → now
@@ -57,7 +57,7 @@ export type SegmentDto = {
   details: DetailTime[]
   interruptions: { label: string; ms: number }[]
   explain: string[]
-  project: string | null // §11.1 attribution
+  project: string | null // DESIGN §7.1 attribution
 }
 
 export type View = {
@@ -68,16 +68,17 @@ export type View = {
   away_ms: number
   rows: Row[]
   segments: SegmentDto[] // chronological
-  longest_focus_ms: number // §11.3
-  switches: number // §11.3
-  one_liner: string // §11.4, already in the resolved language
-  categories: { category: Category; ms: number; share: number }[] // §14.1, over in-use time, desc
-  listening: { label: string; title: string | null; ms: number }[] // §14.2, background audio, never in-use
+  longest_focus_ms: number // DESIGN §8.2
+  switches: number // DESIGN §8.2
+  one_liner: string // DESIGN §9, already in the resolved language
+  categories: { category: Category; ms: number; share: number }[] // DESIGN §8.3, over in-use time, desc
+  listening: { label: string; title: string | null; ms: number }[] // DESIGN §8.4, background audio, never in-use
+  not_shown: { label: string; ms: number }[] // DESIGN §8.5: in use but no row (uncredited passthrough), ms desc
 }
 
 export type SessionMeta = { id: number; started_at_ms: number; ended_at_ms: number | null }
 
-/** §18/§19 history list row (closed sessions are cached by the backend). */
+/** DESIGN §11.5 history list row (closed sessions are cached by the backend). */
 export type SessionOverview = {
   id: number
   started_at_ms: number
@@ -97,13 +98,13 @@ export type PeekEvent = { open: boolean; mode: Layout }
 export type Prefs = {
   always_on_top: boolean
   peek_shortcut: string // Tauri accelerator
-  auto_track: boolean // §11.2
-  launch_at_login: boolean // §22, default true
-  auto_split_after_s: number // §11.2, ≥ 300
+  auto_track: boolean // DESIGN §11.7
+  launch_at_login: boolean // DESIGN §11.8, default true
+  auto_split_after_s: number // DESIGN §11.7, ≥ 300
   language: 'system' | 'en' | 'tr'
 }
 
-// Config is the core `Config` serde shape verbatim (PLAN §3.2; checked against
+// Config is the core `Config` serde shape verbatim (DESIGN §6.5; checked against
 // crates/timewent-core/src/config.rs). Numbers are u32 on the Rust side: whole, non-negative.
 // The backend re-validates with `Config::validate` and rejects with a message string.
 export type Config = {
@@ -115,24 +116,24 @@ export type Config = {
   glance_max_s: number
   labels: Record<string, { label: string; category: Category }>
   docs_domains: string[]
-  passthrough_bundle_ids: string[] // never a context; absorbed into neighbours (§10.1)
+  passthrough_bundle_ids: string[] // never a context; absorbed into neighbours (DESIGN §5.5)
   count_self: boolean // count time spent looking at timewent itself (default false)
-  support_window_s: number // §11.1
-  attribute_projects: boolean // §11.1
-  activities: Activity[] // §13.1, list order = match priority
-  app_categories: Record<string, Category> // §14.1, bundle id → category
+  support_window_s: number // DESIGN §7.2
+  attribute_projects: boolean // DESIGN §7.1
+  activities: Activity[] // DESIGN §7.3, list order = match priority
+  app_categories: Record<string, Category> // DESIGN §5.4, bundle id → category
 }
 
-/** §13.1: a name you give to a set of apps (bundle ids) and sites (domains). */
+/** DESIGN §7.3: a name you give to a set of apps (bundle ids) and sites (domains). */
 export type Activity = { name: string; apps: string[]; domains: string[] }
 
-/** §13.1: what timewent saw in the last 30 days, ms desc (max 50 + 50). */
+/** DESIGN §7.3: what timewent saw in the last 30 days, ms desc (max 50 + 50). */
 export type SeenSources = {
   apps: { bundle_id: string; name: string; ms: number }[]
   domains: { domain: string; label: string; ms: number }[]
 }
 
-/** The backend surface — one method per §6 command. Implemented by Tauri `invoke` and by mock.ts. */
+/** The backend surface — one method per DESIGN §11.10 command. Implemented by Tauri `invoke` and by mock.ts. */
 export interface Backend {
   start_session(): Promise<Status>
   stop_session(): Promise<Status>
@@ -150,9 +151,9 @@ export interface Backend {
   quit_app(): Promise<void> // ends any open session cleanly, then exits
     end_peek(): Promise<void> // esc during a peek: one step down — the pill, still focused
   set_layout(layout: Layout): Promise<void> // user expanded / collapsed
-  seen_sources(): Promise<SeenSources> // §13.1
-  sessions_overview(limit: number, offset: number): Promise<SessionOverview[]> // §19, newest first
-  delete_session(id: number): Promise<void> // §19, never the open session
+  seen_sources(): Promise<SeenSources> // DESIGN §7.3
+  sessions_overview(limit: number, offset: number): Promise<SessionOverview[]> // DESIGN §11.5, newest first
+  delete_session(id: number): Promise<void> // DESIGN §11.5, never the open session
   get_prefs(): Promise<Prefs>
   set_prefs(prefs: Prefs): Promise<Prefs>
 }

@@ -1,4 +1,4 @@
-//! Background listening (PLAN §14.2): audio playing from something other than what you are
+//! Background listening (DESIGN §8.4): audio playing from something other than what you are
 //! looking at. A parallel lane — never added to in-use time.
 
 use crate::config::Config;

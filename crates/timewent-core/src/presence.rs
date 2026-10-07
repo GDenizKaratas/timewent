@@ -1,4 +1,4 @@
-//! Was the user there? `classify_presence` (PLAN §3.4).
+//! Was the user there? `classify_presence` (DESIGN §4).
 
 use serde::{Deserialize, Serialize};
 
@@ -57,7 +57,7 @@ fn instant(sample: &Sample, config: &Config) -> Presence {
     } else if idle < f64::from(config.passive_after_s) {
         Presence::Active
     } else if idle < f64::from(config.away_after_s) || held_by_media(sample) {
-        // Media playing or a call: idle input never means away (PLAN §10.1).
+        // Media playing or a call: idle input never means away (DESIGN §4).
         Presence::Passive
     } else {
         Presence::Away

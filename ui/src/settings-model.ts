@@ -1,4 +1,4 @@
-// Threshold editing (§19): human labels with units in words; the raw config key only in the
+// Threshold editing (DESIGN §11.6): human labels with units in words; the raw config key only in the
 // tooltip. Three knobs visible, the rest under `▸ advanced`.
 import { lang, t, type Key } from './i18n'
 import type { Config, Prefs } from './types'
@@ -75,7 +75,7 @@ export function validateAutoSplit(s: number): string | null {
   return Number.isInteger(s) && s >= 300 ? null : t('err_auto_split', { f: label('auto_split_after_s') })
 }
 
-/** `# Behaviour` toggles bound to prefs, in display order (§22: open at login first). */
+/** `# Behaviour` toggles bound to prefs, in display order (DESIGN §11.8: open at login first). */
 export const BEHAVIOUR_PREFS: readonly { pref: 'launch_at_login' | 'auto_track'; label: Key; hint: Key }[] = [
   { pref: 'launch_at_login', label: 'launch_at_login', hint: 'launch_at_login_hint' },
   { pref: 'auto_track', label: 'auto_start', hint: 'auto_hint' },

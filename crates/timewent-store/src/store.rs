@@ -231,7 +231,7 @@ impl Store {
     }
 
     /// Per context, how many unlocked samples were taken since `from_ms` and when the last
-    /// one was: the raw material for "apps and sites you used" (PLAN §13.1).
+    /// one was: the raw material for "apps and sites you used" (DESIGN §7.3).
     pub fn context_counts(&self, from_ms: i64) -> Result<Vec<ContextCount>> {
         let mut stmt = self.conn.prepare_cached(
             "SELECT c.bundle_id, c.app_name, c.url, count(*), max(s.ts_ms)
@@ -272,7 +272,7 @@ impl Store {
         Ok(rows.collect::<rusqlite::Result<_>>()?)
     }
 
-    /// Newest first, `limit` sessions after skipping `offset` (paging, PLAN §18).
+    /// Newest first, `limit` sessions after skipping `offset` (paging, DESIGN §11.5).
     pub fn sessions_page(&self, limit: u32, offset: u32) -> Result<Vec<SessionMeta>> {
         let mut stmt = self.conn.prepare_cached(
             "SELECT id, started_at_ms, ended_at_ms FROM sessions
@@ -283,7 +283,7 @@ impl Store {
     }
 
     /// Deletes a closed session and its raw samples for good, then the contexts and audio
-    /// sources no remaining sample uses — all in one transaction (PLAN §18). The session
+    /// sources no remaining sample uses — all in one transaction (DESIGN §12). The session
     /// being recorded cannot be deleted.
     pub fn delete_session(&mut self, id: SessionId) -> Result<()> {
         let meta = self.session(id)?.ok_or(Error::NoSuchSession(id))?;
