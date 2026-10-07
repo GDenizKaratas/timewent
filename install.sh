@@ -21,7 +21,12 @@ TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
 echo "→ downloading timewent…"
-curl -fsSL "$URL" -o "$TMP/timewent.zip"
+if ! curl -fsSL "$URL" -o "$TMP/timewent.zip"; then
+  echo "✗ couldn't download the latest release." >&2
+  echo "  If a new version was just published it may still be building, so try again in a few minutes." >&2
+  echo "  Releases: https://github.com/$REPO/releases" >&2
+  exit 1
+fi
 ditto -x -k "$TMP/timewent.zip" "$TMP"
 
 if [ -d "$DEST/timewent.app" ]; then
