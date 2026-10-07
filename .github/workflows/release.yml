@@ -1,0 +1,51 @@
+# Push a tag like v0.1.0 → GitHub builds a universal (Apple Silicon + Intel) timewent.app,
+# runs the tests, and attaches timewent-macos-universal.zip to a GitHub Release.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Rust (both mac architectures)
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: |
+          cargo test --workspace
+          npm test
+
+      - name: Build universal app
+        run: npx tauri build --target universal-apple-darwin
+
+      - name: Zip
+        run: |
+          cd target/universal-apple-darwin/release/bundle/macos
+          ditto -c -k --keepParent timewent.app "$GITHUB_WORKSPACE/timewent-macos-universal.zip"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then TAG="dev-${GITHUB_SHA::7}"; fi
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "timewent $TAG" --generate-notes
+          gh release upload "$TAG" timewent-macos-universal.zip --clobber

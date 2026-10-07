@@ -6,7 +6,9 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "npm --prefix ui install",
+    "predev": "sh scripts/preflight.sh",
     "dev": "tauri dev",
+    "prebuild": "sh scripts/preflight.sh",
     "build": "tauri build",
     "test": "npm --prefix ui test",
     "tauri": "tauri"

@@ -11,6 +11,26 @@ No timers, no tasks, no labels. Work as usual, then look.
 
 ---
 
+## Install
+
+Paste this into Terminal:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/GDenizKaratas/timewent/main/install.sh | sh
+```
+
+It downloads the latest release (Apple Silicon and Intel), puts timewent in Applications and
+opens it. Then press **▶** and allow **Accessibility** when macOS asks.
+
+<details>
+<summary>Prefer to download it yourself?</summary>
+
+1. Get `timewent-macos-universal.zip` from [Releases](https://github.com/GDenizKaratas/timewent/releases/latest)
+   and drag `timewent.app` into Applications.
+2. timewent isn't notarized by Apple yet, so the first launch is blocked. Open
+   *System Settings → Privacy & Security* and click **Open Anyway**. You only do this once.
+</details>
+
 ## What it's for
 
 You sit down for "an hour of work". Afterwards you can't say where that hour went. timewent
@@ -113,10 +133,12 @@ know what you typed. Data lives only in `~/Library/Application Support/dev.timew
 macOS asks once for **Accessibility** (window titles) and **Automation** (browser URLs,
 Spotify/Music track names).
 
-## Build
+## Build from source
 
 You need, once: Xcode Command Line Tools (`xcode-select --install`),
 [Rust](https://rustup.rs) and [Node.js](https://nodejs.org) 20+.
+After installing Rust, **open a new terminal** so `cargo` is on your PATH. `npm run build`
+checks this first and tells you what's missing.
 
 ```sh
 git clone https://github.com/GDenizKaratas/timewent.git && cd timewent
