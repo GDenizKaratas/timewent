@@ -115,12 +115,17 @@ Spotify/Music track names).
 
 ## Build
 
+You need, once: Xcode Command Line Tools (`xcode-select --install`),
+[Rust](https://rustup.rs) and [Node.js](https://nodejs.org) 20+.
+
 ```sh
-npm install
-npm run build        # → target/release/bundle/macos/timewent.app
-npm run dev          # live dev
-cargo test --workspace && (cd ui && npm test)
+git clone https://github.com/GDenizKaratas/timewent.git && cd timewent
+npm install          # also installs the ui
+npm run build        # first build takes a few minutes
+open target/release/bundle/macos/timewent.app
 ```
+
+Move it to `/Applications` if you like. Development: `npm run dev` · tests: `cargo test --workspace && npm test`.
 
 Locally built apps are ad-hoc signed, so macOS forgets the Accessibility grant after a rebuild. If
 file names disappear, toggle timewent off and on in *System Settings → Privacy & Security →
@@ -150,3 +155,7 @@ Accessibility*.
 - ⬜ Signed and notarized release, installable with Homebrew
 - ⬜ Optional VS Code and browser extensions for even finer detail
 - ⬜ Windows and Linux
+
+## License
+
+MIT. See [LICENSE](LICENSE).
